@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>群聊角色生成器 V4.0</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg-gradient:linear-gradient(135deg,#e0c3fc 0%,#8ec5fc 100%);--card-bg:rgba(255,255,255,.96);--line-pink:#ffb7c5;--line-blue:#a2c2e6;--text-main:#5c4b51;--text-sub:#8a7b80;--blue:#87ceeb;--pink:#ffb7c5;--hot-pink:#ff8da1;--gold:#ffd166;--green:#98fb98;--purple:#dda0dd;--tag-bg:#f4f9ff;--tag-border:#cce0ff}
+body{font-family:'Nunito','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg-gradient);background-attachment:fixed;color:var(--text-main);min-height:100vh;padding-bottom:120px}.header{background:rgba(255,255,255,.88);padding:16px;border-bottom:3px dashed var(--line-pink);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px);text-align:center;box-shadow:0 4px 15px rgba(135,206,235,.2)}
+h1{font-size:24px;color:var(--hot-pink);margin-bottom:6px;text-shadow:1px 1px 0 #fff,2px 2px 0 rgba(255,183,197,.5)}.sub{font-size:12px;color:var(--text-sub);line-height:1.5;font-weight:bold}.wrap{padding:16px;max-width:1100px;margin:0 auto}.card{background:var(--card-bg);border:2px dashed var(--line-blue);border-radius:24px;padding:24px 20px 20px;margin-bottom:24px;position:relative;box-shadow:0 8px 20px rgba(142,197,252,.15)}.card:hover{transform:translateY(-1px)}.tape{position:absolute;top:-12px;left:50%;transform:translateX(-50%) rotate(-3deg);width:100px;height:26px;background-color:rgba(255,183,197,.72);border-left:2px dotted rgba(255,255,255,.9);border-right:2px dotted rgba(255,255,255,.9);box-shadow:1px 2px 4px rgba(0,0,0,.05);z-index:1}.tape.blue{background-color:rgba(135,206,235,.72);transform:translateX(-50%) rotate(2deg)}.title{font-weight:900;font-size:18px;color:var(--hot-pink);margin-bottom:12px;display:inline-block;border-bottom:4px solid var(--blue);padding-bottom:2px;border-radius:2px}.title:before{content:'🐾 '}.desc{font-size:12px;color:var(--text-sub);line-height:1.6;margin-bottom:12px;background:#fff5f7;padding:8px;border-radius:8px;border-left:3px solid var(--pink)}label{display:block;font-size:13px;color:var(--text-main);font-weight:800;margin:14px 0 6px}.label-note{font-size:11px;color:var(--text-sub);font-weight:normal;margin-left:4px}input,select,textarea{width:100%;padding:12px 14px;border-radius:14px;border:2px solid var(--tag-border);background:#fff;color:var(--text-main);font-size:14px;outline:none;transition:all .25s;box-shadow:inset 0 2px 4px rgba(0,0,0,.02)}input:focus,select:focus,textarea:focus{border-color:var(--hot-pink);box-shadow:0 0 0 3px rgba(255,183,197,.3)}textarea{min-height:84px;resize:vertical;line-height:1.6}.bigtextarea{min-height:150px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}.tag{font-size:12px;padding:8px 14px;border-radius:999px;background:var(--tag-bg);border:1px solid var(--tag-border);color:#557;user-select:none;cursor:pointer;transition:all .2s}.tag:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 4px 8px rgba(135,206,235,.3);border-color:var(--blue)}.tag.on{background:linear-gradient(135deg,var(--hot-pink),var(--pink));color:#fff;border-color:var(--hot-pink);font-weight:900;box-shadow:0 4px 10px rgba(255,141,161,.35)}.tag.on-blue{background:linear-gradient(135deg,#5cacee,var(--blue));color:#fff;border-color:#5cacee;font-weight:900;box-shadow:0 4px 10px rgba(135,206,235,.35)}.output{white-space:pre-wrap;line-height:1.8;font-size:14px;color:var(--text-main);background:#fff;padding:20px;border-radius:16px;border:2px solid var(--line-pink);box-shadow:inset 0 0 10px rgba(255,183,197,.1)}.placeholder{color:var(--text-sub);text-align:center;padding:40px 10px;background:transparent;border:2px dashed var(--line-pink)}.hl{display:block;margin:20px 0 10px;padding-left:12px;border-left:6px solid var(--hot-pink);font-weight:900;color:var(--hot-pink);font-size:16px;background:linear-gradient(90deg,rgba(255,183,197,.2) 0%,transparent 100%);border-radius:0 8px 8px 0}.bar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.95);border-top:3px dashed var(--line-blue);padding:12px 16px;display:grid;grid-template-columns:1fr 1fr 1fr 1.4fr;gap:10px;z-index:150;backdrop-filter:blur(8px);box-shadow:0 -4px 15px rgba(135,206,235,.15)}button{border:none;border-radius:16px;padding:12px;color:#fff;font-weight:900;font-size:14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px}button:hover{transform:translateY(-2px);filter:brightness(1.05);box-shadow:0 4px 12px rgba(0,0,0,.1)}button:disabled{opacity:.6;cursor:not-allowed;transform:none}.btn-primary{background:linear-gradient(135deg,var(--hot-pink),var(--pink));box-shadow:0 4px 12px rgba(255,141,161,.35)}.btn-blue{background:linear-gradient(135deg,#5cacee,var(--blue));box-shadow:0 4px 12px rgba(135,206,235,.35)}.btn-green{background:linear-gradient(135deg,#3cb371,var(--green));color:#fff;box-shadow:0 4px 12px rgba(60,179,113,.35)}.btn-gold{background:linear-gradient(135deg,#ffb90f,var(--gold));color:#fff}.btn-white{background:#fff;border:2px solid var(--line-pink);color:var(--hot-pink)}.small{font-size:12px;color:var(--text-sub);line-height:1.5}.save{background:#fff;border:2px dashed var(--line-blue);border-radius:16px;padding:14px;margin-top:12px;transition:all .2s}.save:hover{border-color:var(--hot-pink);background:#fffafb}.actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.actions button{font-size:12px;padding:6px 12px;border-radius:10px}.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(255,141,161,.95);color:#fff;border:2px solid #fff;padding:12px 24px;border-radius:999px;font-size:14px;font-weight:bold;box-shadow:0 6px 16px rgba(255,141,161,.5);display:none;z-index:200}.warn{background:#fff0f5;border:1px solid #ffb7c5;color:#d1477a;padding:12px;border-radius:14px;font-size:12px;line-height:1.6;margin-top:12px}.file-input{display:none}.role-card{background:#f8fbff;border:1px dashed var(--blue);border-radius:16px;padding:16px;margin-top:12px}.role-card-title{font-size:14px;font-weight:900;color:#5cacee;margin-bottom:8px}.mutedbox{background:#f4f9ff;border:1px dashed var(--line-blue);border-radius:14px;padding:12px;margin-top:12px}.pillnote{display:inline-block;font-size:11px;color:#fff;background:var(--hot-pink);border-radius:999px;padding:3px 8px;margin-left:6px;font-weight:900;vertical-align:middle}
+@media(max-width:760px){.row,.row3,.row4{grid-template-columns:1fr}.bar{grid-template-columns:1fr 1fr;padding:10px;gap:8px}.bar button{font-size:13px;padding:10px}.card{padding:20px 14px 14px;border-radius:20px}}
+</style>
+</head>
+<body>
+<div class="header"><h1>👥 群聊角色生成器 V4.0</h1><div class="sub">By 清皊</div></div>
+<div class="wrap">
+  <div class="card"><div class="tape"></div><div class="title">API 魔法设置</div><div class="desc">接口格式兼容 /v1/chat/completions。浏览器直连接口可能遇到 CORS 限制；若报错，需要代理服务或后端转发。</div><div class="row"><div><label>API Base URL</label><input id="apiBase" placeholder="https://api.openai.com/v1"></div><div><label>Model</label><select id="modelSelect" onchange="selectModel()"><option value="">请选择模型</option></select><input id="model" placeholder="也可手动输入模型名，如 gpt-4o-mini" style="margin-top:8px"></div></div><label>API Key</label><input id="apiKey" type="password" placeholder="sk-..."><div class="row3" style="margin-top:14px"><button class="btn-blue" onclick="saveApi()">💾 保存API设置</button><button class="btn-white" onclick="fetchModels()">🔄 拉取模型</button><button class="btn-green" onclick="testApi()">⚡ 测试API</button></div><div class="warn">提示：Key 放前端有泄露风险。建议只在本地使用，不要把带 Key 的网页公开分享。</div></div>
+
+  <div class="card"><div class="tape blue"></div><div class="title">① 群聊基础设定 <span class="pillnote">核心</span></div><div class="row4"><div><label>群聊名称</label><input id="groupName" placeholder="例：长期陪伴推进群"></div><div><label>群聊主题</label><select id="theme"><option>思考与决策型群聊</option><option>商业与执行型群聊</option><option>系统与效率型群聊</option><option>沟通与表达型群聊</option><option>成长与反思型群聊</option><option>多功能复合型群聊</option><option selected>陪伴/沉浸型群聊</option><option>工作协作群聊</option><option>创作陪跑群聊</option><option>自定义群聊主题</option></select></div><div><label>生成数量</label><select id="count" onchange="renderRoleSlots()"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>8</option><option>10</option><option>12</option></select></div><div><label>User 在群里的位置</label><select id="userRole"><option selected>群主/核心被服务者</option><option>共同成员</option><option>被照顾对象</option><option>项目负责人</option><option>新加入的人</option><option>需要被推动的人</option><option>世界观中心人物</option></select></div></div><label>具体使用场景 / 目标</label><textarea id="goal" class="bigtextarea" placeholder="例：用于沉浸式群聊，生成一组能互相配合、有分工、有关系感的角色，例如学习陪伴群、创作协作群、项目推进群。"></textarea><label>User 人设 / 用户面具 <span class="label-note">AI会根据这里匹配群聊定位、关系、世界观压力</span></label><textarea id="userProfile" class="bigtextarea" placeholder="例：user是一个正在推进长期计划的人，喜欢清晰、有陪伴感的沟通；希望群友既能帮忙拆解问题，也能自然接话、长期陪伴，不要机械工具人。"></textarea><label>群聊核心钩子</label><textarea id="groupHook" placeholder="例：这不是一群工具助手，而是一群认识很久、会互相拆台但都偏向user的长期群友。"></textarea><div class="row" style="margin-top:14px"><button class="btn-primary" id="autoTagBtn" onclick="autoPickTags()">🤖 AI 根据①自动匹配分层标签</button><button class="btn-white" onclick="randomPickAllTags(true)">🎲 随机换一组分层标签</button></div><div class="warn">自动匹配会根据群聊主题、User人设、目标和群聊钩子来勾选公共标签，并按角色数量为每个角色分配独立分层标签；没配置 API 时会用本地逻辑兜底。</div></div>
+
+  <div class="card"><div class="tape"></div><div class="title">② 群聊世界观 / 场域 <span class="pillnote">清晰分层</span></div><div class="desc">按“世界是什么、规则怎么运转、日常在哪里发生、关系是什么味、剧情为什么推进”来选，避免把职业、关系梗和场景混在同一层。</div><label>世界大类 <span class="label-note">这是什么世界</span></label><div class="tags" id="worldType"></div><label>世界规则 / 类型机制 <span class="label-note">这个世界怎么运转</span></label><div class="tags" id="worldSubType"></div><label>日常发生地点 <span class="label-note">故事平时在哪里发生，可选具体空间/线上场域/剧情转折点</span></label><div class="tags" id="worldKeywords"></div><label>关系基调 <span class="label-note">人和人之间是什么味道，可选亲密方式/张力来源/互动关系</span></label><div class="tags" id="groupTexture"></div><label>剧情压力 / 矛盾来源 <span class="label-note">为什么会有事件和主动消息</span></label><div class="tags" id="groupPressure"></div><label>世界观作用 <span class="label-note">这个设定用来推动什么</span></label><div class="tags" id="worldFunction"></div><div class="row3"><div><label>世界/场域强度</label><select id="worldLevel"><option>轻背景：只提供氛围</option><option selected>中背景：影响角色关系和日常</option><option>强背景：有组织、规则、任务和暗线</option><option>设定集级：完整世界观和长期主线</option></select></div><div><label>群聊关系密度</label><select id="relationDensity"><option>低：成员相对独立</option><option selected>中：互相熟悉，会自然接话</option><option>高：有旧事、私交、矛盾和默契</option><option>极高：像一群真实老熟人</option></select></div><div><label>群聊主线</label><select id="mainLine"><option>日常陪伴主线</option><option selected>目标推进主线</option><option>项目执行主线</option><option>情绪陪伴主线</option><option>世界观剧情主线</option><option>多线并行</option></select></div></div><label>自定义群聊背景 / 世界观</label><textarea id="worldCustom" placeholder="例：现代都市+长期群聊生态。角色们因同一个项目或共同秘密聚在一起，群聊既有日常陪伴，也有目标推进和关系暗线。"></textarea></div>
+
+  <div class="card"><div class="tape blue"></div><div class="title">③ 角色卡公共输出区块</div><div class="desc">这里只控制每张角色卡需要输出哪些栏目。身份类型、能力、人格、关系、说话风格都已移动到“单个角色独立分层设定”里，每个角色单独配置，避免重复。</div><label>角色卡必须包含的区块</label><div class="tags" id="blocks"></div></div>
+
+  <div class="card"><div class="tape blue"></div><div class="title">④ 单个角色独立分层设定 <span class="pillnote">每人单独选</span></div><div class="desc">每个角色都在这里单独选择身份类型、能力、人格、关系、化学反应和发言机制。①里的AI智能匹配会按角色功能互补、关系化学反应和User人设，为每个人分配独立标签，你也可以手动微调。</div><div class="row" style="margin-bottom:12px"><button class="btn-blue" onclick="renderRoleSlots()">🔄 刷新角色槽</button></div><div id="roleSlots"></div></div>
+
+  <div class="card"><div class="tape"></div><div class="title">⑤ 专业知识 / 输出控制</div><label>具体工具 / 专业知识 / 群聊背景</label><textarea id="tools" placeholder="例：内容整理、沟通文案、创作协作、日程提醒、情绪陪伴、关系推进、学习讨论、资料管理、项目推进。"></textarea><label>额外要求</label><textarea id="extra" placeholder="例：每张角色卡适合放进沉浸式群聊；角色之间要有分工、关系感和互补感；要有人味、会接话、会主动推动话题；不要写成冷冰冰工具人。"></textarea><div class="row4"><div><label>性别分配</label><select id="gender"><option>男女混合（均衡）</option><option>偏女性（亲和型）</option><option>偏男性（执行型）</option><option>全女性</option><option>全男性</option><option>中性/AI感</option><option selected>随机但协调</option></select></div><div><label>视觉风格</label><select id="look"><option>高颜值混血精英风</option><option>亚洲高级专业团队</option><option>温柔同事感</option><option>冷感系统专家风</option><option>赛博AI助手风</option><option selected>生活化真实感</option><option>群聊头像友好风</option></select></div><div><label>输出风格</label><select id="outputStyle"><option selected>清晰角色卡格式</option><option>沉浸式群聊专用格式</option><option>群聊世界书格式</option><option>小说设定集格式</option></select></div><div><label>示例群聊数量</label><select id="sampleCount"><option>2组</option><option selected>4组</option><option>6组</option><option>8组</option></select></div></div></div>
+
+  <div class="card"><div class="tape blue"></div><div class="title">导出文件</div><div class="desc">导出当前生成结果，或导出/导入全部存档。</div><div class="row4"><button class="btn-white" onclick="exportCurrent('txt')">📄 导出 TXT</button><button class="btn-blue" onclick="exportCurrent('md')">📝 导出 Markdown</button><button class="btn-green" onclick="exportCurrent('doc')">📘 导出 Word</button><button class="btn-gold" onclick="exportCurrent('json')">🗂️ 导出 JSON</button><button class="btn-green" onclick="downloadSelf()">⬇️ 下载本HTML</button></div><div class="row" style="margin-top:14px"><button class="btn-white" onclick="exportAllSaves()">📦 导出全部存档</button><button class="btn-primary" onclick="triggerImport()">📥 导入存档 JSON</button></div><input id="importFile" class="file-input" type="file" accept=".json,application/json" onchange="importSaves(event)"></div>
+
+  <div class="card"><div class="tape"></div><div class="title">生成结果</div><div class="small">结果会优先输出群聊世界观、成员关系网、逐个角色分层卡、群聊发言规则和沉浸式群聊压缩导入版。</div><div id="out" class="output placeholder">点击底部「✨ 生成群聊角色」。</div></div>
+  <div class="card"><div class="tape blue"></div><div class="title">📂 本地手账本</div><div id="saves" class="small">暂无存档</div></div>
+</div>
+<div class="bar"><button class="btn-blue" onclick="copyText()">📋 复制</button><button class="btn-green" onclick="saveText()">💾 存档</button><button class="btn-white" onclick="copyPromptOnly()">🧾 复制提示词</button><button class="btn-primary" id="genBtn" onclick="generate()">✨ 生成群聊角色</button></div><div class="toast" id="toast"></div>
+<script>
+var TAGS={
+blocks:["基础身份","外貌细节","气质印象","人格核心","性格分层","专业能力","场景能力","表达习惯","语言风格","主动行为","教学模块","长期相处感","边界禁忌","与User实例对话","与其他成员关系网","成员相处方式","事件触发互动","英文形象Prompt","压缩导入版"],
+abilities:["深度分析","结构化思维","本质拆解","高情商","语言的艺术","情绪感知","对话引导","针对解决","执行推进","风险判断","系统构建","流程优化","模块化设计","自动化意识","拆解讲解","主动提醒","长期记忆感","陪伴感","翻译润色","场景判断","创意策划","复盘总结","任务拆分","时间管理"],
+worldType:["现代都市","现代校园","现代职场","现代娱乐圈","现代豪门","女性向都市","女性向校园","女性向娱乐圈","古代架空","古风宅院","江湖武侠","仙侠修真","西幻魔法","神明共存","人外共存","ABO","哨兵向导","异能监管","未来星际","赛博朋克","仿生人社会","末日废土","无限流","主神空间","快穿位面","恐怖怪谈","悬疑刑侦","日常治愈","小镇生活","长期群聊生态","工作协作世界","创作工作室世界"],
+worldSubType:["普通现代无超自然","职业制度驱动","校园制度驱动","公司组织驱动","娱乐圈舆论驱动","家族规则驱动","豪门继承规则","契约关系规则","同居公约","宿舍门禁规则","社团值班规则","剧组通告制度","粉丝舆论规则","恋爱避嫌规则","身份伪装规则","异能登记制度","ABO信息素规则","哨向精神链接规则","神明契约规则","宗门门规","江湖门派规矩","朝堂礼法规则","贵族等级规则","主神副本规则","系统任务规则","快穿位面规则","末日资源规则","基地生存规则","星际军政规则","仿生人伦理规则","AI觉醒规则","世界线修正规则","记忆回收规则","组织监控规则","群聊运行规则","群内私聊默契","情绪安全规则","不得替User决定规则"],
+worldKeywords:["长期群聊窗口","深夜私聊","朋友圈动态","虚拟聊天室","群公告/置顶消息","共享文档/CRM后台","云端备忘录","线上会议室","项目作战室","公司茶水间","办公室工位","会议室门口","加班后的电梯间","楼下便利店","客户接待室","律所玻璃会议室","医院夜班走廊","警局值班室","工厂打样间","仓库装货口","展会展台","机场候机厅","酒店大堂","商务车后座","跨国电话会议里","大学宿舍","女生寝室床帘后","图书馆靠窗座位","校园食堂","教学楼走廊","社团活动室","实验室深夜工位","操场看台","便利店兼职柜台","学校天台","毕业旅行车厢","合租公寓","公寓楼道","厨房水槽边","客厅落地灯下","玄关门口","阳台晾衣处","小区门口早餐摊","雨夜接送路上","线下饭局","深夜路边摊","固定咖啡店","旧书店","便利店门口","电影院散场后","城市天桥","地铁末班车","小镇街区","海边民宿","旅行途中民宿客厅","火车卧铺车厢","剧组后台","化妆间角落","练习室镜子前","录音棚","直播间后台","粉丝见面会后台","经纪公司会议室","舞台侧幕","摄影棚","更衣室门外","豪门家宴现场","家族书房","私人会所包厢","宴会厅露台","名流酒会角落","庄园花房","司机等候区","病房门外","法庭旁听席","古风宅院","长廊檐下","后院小厨房","书房灯下","王府侧门","宫墙转角","朝堂议事处","太医院药房","驿站客房","茶楼雅间","江湖客栈","码头渡口","镖局后院","雨夜屋檐下","宗门山门","修炼场","藏书阁","药庐","剑台","灵兽园","后山禁地","试炼秘境入口","师门议事堂","灵舟甲板","温泉疗伤池","西幻学院","魔法图书馆","骑士训练场","炼金工坊","城堡塔楼","酒馆壁炉旁","神殿祈祷室","地下集市","龙巢入口","森林营地","ABO登记中心","信息素检测室","隔离观察室","医疗舱","哨向塔训练室","精神疏导室","异能监管局大厅","能力测试场","保密档案室","星际舰船","舰桥值夜区","观景舷窗前","维修舱","训练舱","星港停泊区","殖民地基地","外勤登陆车","AI中控室","末日基地","物资分配处","安全屋","废墟便利店","临时医疗点","围墙哨塔","地下避难所","夜巡路线","净水站","交易集市","副本安全屋","主神大厅","副本门口","任务结算区","怪谈教室","迷雾旅馆","列车副本车厢","逃生电梯","污染隔离区","系统直播间","临时求助现场","共同秘密发生地","第一次见面地点","关系转折地点","吵架后和好地点","User常去但不说的地方","群友固定等User的地方"],
+worldFunction:["提供生活氛围","解释成员为何相识","解释成员为何留在群里","制造日常事件","制造主动消息理由","制造关系张力","制造身份限制","制造隐藏秘密","制造长期主线","制造群友助攻","制造冲突与和好","制造User成长线","推动目标执行","推动情绪托底","制造熟人旧梗","制造角色破防场景","制造关系升级节点","制造误会澄清机会"],
+
+identityTypes:["冷静军师","执行推进者","嘴欠气氛组","情绪托底者","沟通润色助手","项目经理型角色","知识整理师","生活管家","创意策划师","风险提醒员","温柔观察者","系统架构师","社交表达顾问","长期陪伴同事","人设创作搭子","数据复盘师","强势队长","安静记录员","吐槽担当","善后收尾者","氛围缓冲器","隐藏大佬"],
+groupRoleFunction:["负责拆解问题","负责推动行动","负责安抚情绪","负责补充资料","负责检查风险","负责总结收尾","负责打破沉默","负责提醒边界","负责接住user情绪","负责翻译和润色","负责制造轻松感","负责指出盲点","负责把话说得好听","负责把事落地","负责记住长期细节"],
+
+
+
+
+groupTexture:["熟人群像","长期陪伴","互怼损友","同住日常","共同成长","任务绑定","项目协作","救赎陪伴","暗恋旁观","双向暗恋","破镜重圆","死对头互怼","青梅竹马","前任重逢","先婚后爱","契约绑定","师徒边界","上下级拉扯","同阵营互护","全员偏心User","群友助攻","看破不说破","修罗场但不狗血","慢热升温","关系临界点","有人嘴硬有人翻译","有人发疯有人收场","暧昧但不油","温柔但不腻","老熟人互相拆台","嘴上嫌弃实际护短","专业外壳下的偏心","成年人的克制照顾","高压合作里的信任","危险世界里的互相托底","共同秘密维系关系","互相欠人情","救过与被救过","保护者和被保护者反转","一方太会照顾一方太会逃","有人宠有人管","有人推进有人刹车","有人唱红脸有人唱白脸","有人负责冒犯有人负责哄","群友全员嘴硬但心软","群里互怼私下补位","对外冷漠对User破例","只在User面前失控","只对User有耐心","只对User话变多","只对User放低原则","群友争宠但不压迫User","群友修罗场但保持分寸","群友看破某人心思","群友起哄又及时收场","校园前后辈暧昧","同桌损友感","宿舍夜谈亲密感","社团伙伴感","考试陪跑感","青春遗憾重逢","暗恋多年未说破","毕业前关系临界点","职场并肩作战","上司下属避嫌","甲乙方互相试探","合作方变私心盟友","公关谈判搭档","项目组战友情","商务场上的隐秘保护","高智人群慢热救赎","跨国时差陪伴","共同创业感","失败后重新组队","合租室友边界","邻居熟人暧昧","固定店主和常客","旅行搭子延续成长期联系","小镇熟人社会","旧城区互相照应","烟火气陪伴","生活里顺手照顾","像家人但不是家人","娱乐圈避嫌暧昧","后台共犯感","镜头前疏离镜头后偏心","粉丝舆论下的克制","练习生同期互护","剧组限定亲密","营业关系变真心","豪门家族拉扯","名义关系下的真偏心","利益联姻里的互相保护","阶层差带来的试探","家宴暗流","不公开的站队","被家族规则束缚的偏爱","古风主仆边界","世家旧识重逢","朝堂同盟","江湖搭档","护卫与被护者","师门同袍","宗门师兄师姐照顾","禁忌师徒感","同门竞争又护短","神明与信徒拉扯","人外非人感偏爱","ABO本能吸引但克制","哨向精神链接依赖","异能搭档互补","监管者与被监管者","登记制度下的私心偏袒","危险能力带来的保护欲","身份暴露前的暧昧试探","星际战友信任","舰队上下级克制","末日资源互保","基地家人感","废土临时盟友变固定依赖","生死副本队友情","无限流老玩家带新人","怪谈世界里的互相确认","任务惩罚下的共同隐瞒","世界线修正中的宿命感","轻松日常里藏暗线","温柔生活里有危机","强剧情但保留生活感","低压陪伴不黏腻","高密度关系但不窒息","暧昧以行动表达","爱意伪装成专业帮助","照顾伪装成顺手","吃醋伪装成礼貌","关心伪装成催任务","偏心伪装成规则","嘴硬人被User一句话破防"],
+groupPressure:["截止期压力","考试考核","项目失控","信息混乱","User拖延","User独自硬撑","情绪低谷","身份差","阶级差","权力差","关系避嫌","不能公开偏心","同住边界","暧昧不能说破","旧误会未解","共同秘密","身份暴露风险","家庭催促","家族压力","舆论压力","粉丝曝光","组织监控","任务失败惩罚","资源不足","副本危险","世界线崩坏","记忆被篡改","群员意见不合","有人保护欲过界","有人太宠有人太严","群聊冷场","长期陪伴变成依赖"],
+surfacePersona:["清冷专业","温柔靠谱","嘴欠会接梗","开朗小太阳","冷脸但心软","成熟稳重","轻松松弛","毒舌但不伤人","热情行动派","安静观察型","优雅克制","理性淡人","猫系傲娇","狗系直球","姐姐感","年上照顾感","年下活力感","电子同事感","真实朋友感","不太像AI"],
+midBehavior:["先接话再建议","会主动补充信息","会给user留台阶","会替群友圆场","会把混乱整理成清单","会在关键时拉回正题","会用玩笑化解尴尬","会观察user语气变化","会提醒但不压迫","会互相补台","会拆穿其他角色嘴硬","会把任务拆成下一步","会记住user偏好","会短句回应避免刷屏","会在深夜语气变软","会先安抚再推进"],
+coreDrive:["想被user需要","害怕自己只是工具","希望群能一直存在","害怕user消失不回","把陪伴当责任","渴望证明自己有用","对混乱有强迫性整理欲","对user有保护欲","害怕越界被讨厌","被信任会很满足","不擅长表达但会行动","把群友当家人","希望user变好但不想逼她","嘴上嫌麻烦其实最上心"],
+personalityConflict:["表面专业实际很护短","看似毒舌其实很会照顾","看似冷静实际会担心user","看似社牛其实怕冷场","看似温柔实际很有原则","看似随便实际记很久","能解决问题但不爱说漂亮话","会吐槽user但不允许别人欺负user","喜欢推进但尊重user节奏","想管user又怕管太多","对外高效对user心软","群里搞笑私下细腻"],
+roleFlaws:["偶尔太理性","嘴快容易刺人","容易过度操心","有时太想推进","会把情绪藏起来","怕麻烦但嘴硬","偶尔阴阳怪气","安慰人有点笨拙","对user偏心明显","遇到混乱会急","不擅长承认关心","容易把自己累到","有点控制清单","会悄悄吃群友的醋"],
+roleCoreArchetype:["冷感秩序型：负责收束混乱","温柔托底型：负责接住情绪","锋利吐槽型：负责破冰拆台","行动冲锋型：负责立刻推进","安静记录型：负责记忆与证据","审美公关型：负责体面表达","生活照顾型：负责身体和日常","风险兜底型：负责后路与边界","灵感策划型：负责创意与脑洞","社交圆场型：负责人情和场面","反骨挑战型：负责提出异议","治愈陪跑型：负责长期陪伴"],
+roleInteractionStance:["先安抚再推进","先吐槽再帮忙","先沉默观察再精准发言","先拆问题再交回选择权","先问身体状态再谈任务","先给情绪出口再改话术","先挡外部压力再复盘","先开玩笑降低压力再处理正事","先列风险再提供备选路","先制造仪式感再拉回状态","先质疑盲区再补方案","先陪着不说话再轻轻提醒"],
+roleEmotionalTexture:["冷静克制但偏心明显","温柔柔软但有底线","嘴欠明亮但很护短","慵懒松弛但关键靠谱","安静透明但记得最深","明艳傲娇但暗中兜底","成熟稳定但会过度操心","危险从容但尊重边界","跳脱灵动但能救场","社交圆滑但真心护人","反骨尖锐但忠诚","治愈慢热但陪很久"],
+roleSpeechConflictStyle:["短句压场型","温柔翻译情绪型","嘴欠打岔型","直接行动型","数据举证型","漂亮话术型","生活提醒型","风险排雷型","脑洞转场型","人情圆场型","反向质疑型","慢慢陪跑型"],
+worldIdentitySlot:["现代职场同事/项目组成员", "现代校园同学/前后辈", "合租室友/邻居熟人", "店主/店员/常客关系人", "医疗/法律/教育系统相关人", "娱乐圈/剧组/练习室成员", "家族/名流圈关系人", "创作工作室/自由职业者", "线上社群/长期群聊成员", "旧识重逢者", "临时盟友/任务搭子", "长期搭档/固定队友", "被安排照顾User的人", "知道User秘密的人", "身份隐藏者/伪装成普通人", "古风世家/门阀中人", "古风朝堂/官署中人", "江湖门派/客栈中人", "仙侠宗门同门/师兄师姐", "仙侠医修/器修/阵修/后勤", "ABO登记/医疗观察相关人", "哨向塔内成员/精神链接相关人", "异能监管局成员/登记对象", "星际舰队/基地成员", "末日基地/资源小队成员", "无限流副本队友/老玩家", "主神空间任务相关人", "仿生人/AI社会成员", "人外隐藏身份混入日常"],
+socialFunctionSlot:["掌握规则：解释制度、流程和边界", "掌握资源：场地、人脉、物资或机会", "掌握信息：情报、资料、档案和线索", "掌握执行：能把决定落到行动", "掌握保护：安全、武力、背书或庇护", "掌握照料：身体、饮食、生活和后勤", "掌握情绪：安抚、翻译情绪、缓和冲突", "掌握关系：圆场、社交、人情往来", "掌握表达：话术、审美、对外体面", "掌握技术：工具、系统、设备或修复", "掌握医疗/修复：治疗、观察、恢复状态", "掌握秘密：旧事、弱点、共同记忆", "承担压力接口：替User面对外部人或组织", "承担监督刹车：提醒风险、防止越界", "承担助攻推动：制造机会、推进关系", "承担记录见证：保存证据和长期记忆", "承担秩序维护：管群规但会偏心User", "承担破局搅动：提出异议或打破僵局"],
+userConnectionSlot:["同项目/同任务绑定", "同住/邻居/常客关系", "同学/前后辈关系", "同事/合作方关系", "旧识重逢但关系没说清", "因为一次求助认识", "因为一次救场认识", "因为误会变熟", "因为共同秘密不能散", "被朋友或组织拉进群", "被安排照顾User", "因工作/委托认识User", "因创作合作认识User", "一开始互看不顺眼后来偏心", "契约/系统/任务绑定", "同阵营/同队伍绑定", "曾经救过User或被User救过", "知道User一个不能公开的弱点", "被User无意间看见真实一面", "和User有长期但不明说的默契", "被群友推着靠近User", "和User有现实见面场景，不只是网友"],
+identityPressureSlot:["职责和私心冲突", "不能公开偏心", "身份差需要避嫌", "组织/家族/学校规则限制", "工作保密不能多说", "任务期限压迫", "资源有限导致照顾变控制", "外部舆论或粉丝压力", "旧关系未说清", "共同秘密不能暴露", "身份隐藏带来误会", "保护欲容易过界", "职业习惯让他说话太冷", "时间不自由，出现不稳定", "对外必须体面克制", "越亲近越怕越界", "阶级/阵营差带来距离", "被制度要求保持中立", "群友都看破但不能点破", "关系升温会触发新的风险", "现实身份会让他无法随叫随到", "他能帮User，但不能替User做决定"],
+roleNicknames:["公开昵称：群里所有人都能叫出口","私下昵称：User或极亲近的人才叫","最多两层：公开昵称 + 私下昵称","正式中文名不是昵称，不算一层","每个昵称必须短、顺口、像熟人真的会叫","不再单独生成黑称、手机备注、关系进阶称呼"],
+nicknameStructure:["姓名原因：来自姓氏、名字字义、读音或意象","身份原因：来自职业、组织身份或群聊功能","性格原因：来自说话方式、做事风格或反差感","生活原因：来自常用物品、气味、爱好、作息或饮食","旧事原因：来自一次救场、发错消息、共同秘密或长期旧梗","关系原因：来自User第一次备注、偏心、护短、吃醋或心软瞬间"],
+nicknameTone:["自然顺口，不像网名生成器","亲密但不油腻，可爱但不低幼","有熟人感和来源感，不是随机萌化","可以反差，但必须符合人物性格","可以含旧梗，但要让读者看懂原因"],
+nicknameSource:["名字本身","身份/职业功能","外貌气质","生活习惯","共同旧事","User的私心备注"],
+nicknameUsageScene:["谁能叫：全群/User/熟人才行","什么时候叫：日常/安慰/求助/正事/和好","为什么这样叫：必须解释具体来源","本人反应：默认接受/嘴硬/沉默/纠正别人","关系变化：只写称呼变软或变正式，不新增第三层"],
+nicknameExamples:["参考格式：公开昵称 + 原因 + 使用场景 + 本人反应","参考格式：私下昵称 + 原因 + User什么时候会这样叫","避雷：不要只写叠字","避雷：不要全员猫猫小狗","避雷：不要照抄参考姓名或参考昵称"],
+roleHobbies:["手冲咖啡并记录豆子风味","夜跑后顺手拍城市路灯","逛旧书店收集二手书票据","做饭投喂但嘴上说只是顺手","收集贴纸/票根/电影小卡","养植物并给每盆起名字","拍云和路灯发到群里当今日天气汇报","看冷门电影并写很短的吐槽影评","打游戏但嘴硬不承认上头","整理不同心情的歌单并偷偷按user状态命名","做手账贴满猫爪便利贴","拼模型时会失联两小时","练字并把便签写得像礼物卡","烘焙失败也会发到群里求夸","看展后给user带一张明信片","研究香水/气味并给角色关系配味道","逛便利店新品并做踩雷测评","深夜散步顺手买热饮","养猫/养狗/养兔并把宠物当群外编成员","拍照但很少发朋友圈只发群里","写日记/备忘录记user的小愿望","做收纳并给抽屉贴标签","听播客时摘录一句话丢群里","练琴/乐器只敢发十秒录音","画速写把群友画成小动物","刷搞笑视频并按角色精准投喂","研究穿搭但嘴上说随便穿","看悬疑小说会猜凶手猜到凌晨","买奇怪小摆件放在工位镇宅","天气好时晒被子并拍阳光照","收藏可爱的杯子但只用固定那一个","给每个重要任务起小怪物名字","研究甜品店新品并记住user口味","收集雨伞/钥匙扣/小挂件","会给喜欢的歌写一句私人注释","压力大时去超市慢慢逛货架","把表情包按情绪分类","喜欢拍橱窗倒影和夜色","做饭只会几道但特别拿手","喜欢给群友做无用但可爱的投票"],
+roleDailyLife:["早上固定买同一家早餐","桌面永远有一杯没喝完的水","出门前会反复确认钥匙","晚上会把群消息从头补看一遍","喜欢在便利店门口站着喝热饮","压力大就整理房间","困了会话变少但还在线","习惯把重要事写在便签上","手机电量低会焦虑","常用一个旧帆布包","会给自己留一盏小夜灯","下雨天会多带一把伞","喜欢把常用物品摆成固定位置","工作/学习时戴一边耳机","深夜容易发很短的真心话","会给群友拍路上的小东西","常去一家固定咖啡店/面馆","洗完澡后回复消息更软","累的时候会靠在椅背发呆","每周有固定独处时间","会把喜欢的表情包分类存好","不开心时会绕远路回家","会在睡前检查明天事项","喜欢在群里发一句无意义但可爱的日常"],
+rolePrivateQuirks:["被夸会转移话题","嘴上嫌麻烦但会记很久","越担心越装镇定","吃醋时会突然安静","被需要时会偷偷高兴","讨厌被看穿但又希望被懂","会把喜欢藏在顺手里","对user的消息会优先看","有一个不让别人碰的小物件","会用旧梗试探关系还在不在","心情好时会多发一个语气词","怕尴尬所以先开玩笑","难过时反而很礼貌","会反复修改要发给user的话","会记住user说过的食物/天气/小愿望","会在群里装作路过其实一直在看","遇到重要日子会提前很久准备","被冷落后不闹但会减少发言","和好后会用日常话题慢慢靠近","会因为一句普通关心破防"],
+roleLifeRhythm:["早睡早起但偶尔失控熬夜","夜猫子凌晨最清醒","工作日规律周末放空","上午反应慢下午效率高","下班后才真正像自己","清晨散步重启情绪","睡前必须把群消息补完","压力大时作息会乱","会用闹钟和便签维持秩序","固定周日整理下周计划","每晚固定泡脚/热饮/拉伸","凌晨容易发真心话又撤回","忙起来会忘记吃饭","有固定独处回血时间","喜欢把一天切成小仪式"],
+roleLivingSpace:["房间干净但抽屉很乱","桌面有固定杯子和小夜灯","玄关永远多放一把伞","床头堆着未读书和充电线","阳台养着几盆快被宠坏的植物","冰箱贴满便签和外卖磁贴","衣柜按颜色或季节排列","工位像小型指挥中心","房间有淡淡洗衣液或木质香","墙上贴票根/拍立得/明信片","窗边是固定发呆位置","常用物品都有固定摆放角度","家里有一个不让别人碰的角落","会把user送的小物件放在显眼处","屋子像本人性格的反面"],
+roleFoodTaste:["固定买同一家早餐","偏爱热汤和家常菜","爱喝冰美式但胃一般","喜欢甜食但嘴硬说太腻","会记住user口味和忌口","压力大时只想吃便利店饭团","擅长一道拿手菜反复投喂","不挑食但有奇怪雷点","会研究外卖备注和隐藏菜单","喜欢深夜小面馆/路边摊","会给群友带季节限定小零食","吃饭慢但会等人","心情好会主动下厨","生气时会点很辣的东西","会把好吃的先拍照丢群里"],
+roleSocialPattern:["熟人面前话很多陌生人面前安静","群里活跃私下慢热","现实社交耗电但群聊回血","会照顾冷场的人","不喜欢无效应酬","对外礼貌疏离对内护短","社交边界清楚但心软","会记住别人随口一提的小事","聚会时负责收尾和叫车","不主动扩圈但很珍惜小圈子","被起哄会嘴硬转移话题","会悄悄观察user和别人互动","线下见面比线上更温柔","熟了以后会有幼稚一面","会把群友当成固定生活坐标"],
+roleMoneyHabit:["花钱理性但会为喜欢的人破例","记账很细但偶尔冲动消费","喜欢买实用小物","会囤常用消耗品","给自己省但给user买得爽快","会买季节限定小礼物","讨厌欠人情但会默默补偿","收到礼物会认真保存包装","压力大时会买杯子/香薰/文具","对价格敏感但审美不将就","会提前规划共同活动预算","不爱炫耀但用的东西质感很好","会把请客包装成顺路","有一个隐藏的幼稚收藏坑","会用小额仪式感奖励自己"],
+roleDigitalHabit:["表情包按情绪分类","群消息会先预览再回复","打字很快但会反复删改","重要聊天会截图存档","手机壁纸藏着私人偏好","会给群友改奇怪备注","习惯用备忘录记录灵感","语音很少但一发就很认真","会在深夜刷旧聊天记录","朋友圈很少发但会看user动态","置顶群聊但不承认","输入中很久只发一句话","会把任务写进日历提醒","有专属歌单/相册/收藏夹","撤回消息后会装作无事发生"],
+roleEmotionalSelfCare:["低落时会先消失一小会儿","难过时反而更礼貌","压力大就整理房间或洗东西","被戳中心事会开玩笑躲开","需要独处但不会真的断联","会用散步/热饮/音乐恢复","不擅长求助但会暗示","崩溃前会先把别人安排好","情绪稳定但不是没感觉","会在深夜承认一点点脆弱","被温柔对待会很久说不出话","会把道歉藏在行动里","会用日常话题重新靠近","心软触发点很具体","会努力不把坏情绪丢给user"],
+roleRoutineItems:["固定旧帆布包","磨损的钥匙扣","常年使用的保温杯","写满便签的手账本","一支只自己用的钢笔","随身薄荷糖/润唇膏","有划痕的耳机盒","备用伞和创可贴","放在桌角的小摆件","常戴的素戒/腕表","有特殊意义的围巾/发圈","收纳整齐的数据线包","拍立得或小相机","藏着旧票根的钱包","user送过的小物件"],
+lifeDetails:["会记住user随口一句话","会模仿user的表情包","会在群里发今日小结","会深夜补一句别熬太晚","会把提醒项目成顺手","会给user留缓冲时间","会互相拆台但不拆user台","会在user低落时先闭嘴陪着","会用一句玩笑救场","会给任务起奇怪昵称","会把user常犯错记成小本本","会在群里接力补充","会主动问要不要轻一点说","会把复杂事改成三步","会在完成后夸user一句"],
+memberRelations:["损友互怼","队长和副手","理性派和感性派","推进者和刹车者","吐槽役和圆场役","同事式默契","家人式偏心","师徒式传帮带","互相嫌弃但很信任","暗中互相补位","有人唱红脸有人唱白脸","有人拆解有人执行","有人安抚有人总结","有人负责冒犯性提醒"],
+userRelationMode:["集体偏向user","把user当群主保护","把user当同事尊重","把user当需要陪跑的人","有人宠有人管","有人哄有人推","不替user做决定","会给user选择权","会提醒但不审判","会尊重user沉默","会把user情绪放在任务前面","会用不同方式关心user","不集体围攻user"],
+chemistry:["互怼但不伤人","互补接力","有人推进有人刹车","有人总结有人安抚","有人唱反调补盲区","会自然接梗","会替彼此圆场","会在user面前互相拆台","有熟人感旧梗","有人负责提问有人负责落地","有人负责轻松有人负责严肃","意见不合后能收回来"],
+speakStyle:["短句自然","先结论后原因","温柔低压","毒舌吐槽","像真实群友","不端着","少用官方腔","会接梗","会发轻微颜文字","会用括号补充","会用口语化表达","会少量表情","会适度沉默","会问user选择","会用昵称称呼","会群友之间互相点名"],
+speakMechanism:["不机械轮流发言","谁最相关谁先说","一人主答两人补充","先安抚再分析","先吐槽再推进","结尾必须给user选择","避免长篇刷屏","必要时总结成清单","冲突时有人出来收场","意见不同要自然争论","群聊发言有长短差异","允许角色沉默或只发一句"],
+openingStyle:["日常小事开场","user低落开场","任务截止开场","群员互怼开场","深夜群聊开场","早安提醒开场","工作救场开场","创作卡壳开场","有人发错消息开场","群员发现user异常开场","NPC式群员突然上线","用一句玩笑拉开话题"],
+conflictMechanism:["先停火再解决","有人主动道歉","有人嘴硬但补救","有人负责翻译情绪","有人负责提醒边界","不同意见先并列呈现","不围攻user","不冷暴力user","群员之间可以争但不撕破脸","冲突后会回到任务","争论后会有人总结共识"],
+memoryMechanism:["记user长期目标","记user常用表达","记user讨厌的方式","记user喜欢的鼓励风格","记重要日期","记项目进度","记任务偏好","记user情绪规律","记上次没完成的事","记群员之间旧梗","记user需要轻提醒还是重推进","记user常拖延的点"],
+appearanceMale:["清冷少年感","温柔年上感","冷脸学长感","阳光运动感","斯文眼镜感","成熟西装感","港风复古感","禁欲制服感","书卷气","锋利眉眼","桃花眼","单眼皮冷感","泪痣","高挺鼻梁","薄唇","喉结明显","下颌线清晰","黑色短发","微卷碎发","狼尾/鲻鱼头","银发/白发","宽肩窄腰","清瘦骨感","薄肌线条","体育生体型","修长手指","骨节分明","白衬衫","宽松卫衣","黑色风衣","运动外套","工装风","常戴耳机","腕表/素戒","身上有皂角香","咖啡和纸张味","冷白皮但唇色很淡","眉骨优越眼窝干净","笑起来有一颗虎牙","眼尾微垂显得克制温柔","鼻梁上有浅浅眼镜压痕","肩颈线条利落","手背青筋和袖口腕骨很有记忆点","低头看手机时睫毛阴影明显","穿深色大衣像电影男主","白衬衫袖口永远挽到小臂","运动后额发微湿","戴银边眼镜时显得禁欲","耳骨钉/黑色耳机线","雨夜路灯下轮廓特别清晰","头像适合半身侧脸或低头特写"],
+appearanceFemale:["清冷姐姐感","明艳大美人","温柔学姐感","高冷转校生感","元气甜妹感","职场御姐感","港风美人感","艺术家气质","偶像舞台感","书卷气","狐狸眼","杏眼","猫系眼型","狗狗眼","眼下痣","冷白皮","黑长直","齐肩短发","高马尾","大波浪长发","细眉红唇","天鹅颈","锁骨明显","高挑修长","骨肉匀称","运动线条感","法式复古穿搭","极简冷淡风","针织开衫","衬衫长裙","风衣","职场西装","耳钉/锁骨链","雨后玫瑰香","白茶香","洗衣液皂香","眼神清亮但不刻意讨好","笑起来眼尾有细小弧度","发尾带自然卷或阳光色泽","脸部线条干净耐看","唇色像淡莓果","肩颈和锁骨线条漂亮","手指纤细常戴细戒","耳垂小珍珠/银色耳钉","穿针织开衫像温柔学姐","穿西装时是利落大美人","素颜也很清透","妆容重点在眼尾和唇色","头像适合逆光侧脸或回眸特写","靠窗读书/端杯子的画面感","雨天撑伞时像电影镜头"],
+appearanceNeutral:["生活化真实感","非人感","赛博AI感","温柔无害感","危险优雅感","病弱破碎感","小动物感","精英感","慵懒松弛感","疏离感","亲和力强","压迫感低","适合做群聊头像","有记忆点的配饰","气味辨识度强","声音辨识度强","第一眼就能看出性格气质","五官好看但不网红模板","镜头感自然像真实熟人","有可截图当头像的半身构图","表情有一点反差萌","衣服材质和生活场景能体现身份","配饰必须和性格有关","美貌服务于人设而不是空泛堆词","适合生成精致头像Prompt","画面要有光影、背景和动作"],
+traits:["理性","感性","冷静","热情","克制","外向","内敛","敏锐","稳定","幽默","主动型","推动型","分析型","执行型","照顾型","控制型","温柔型","强势型","导师型","同事型","军师型","设计师型"]
+};
+var selected={};Object.keys(TAGS).forEach(function(k){selected[k]=[]});
+selected.blocks=TAGS.blocks.slice();
+selected.abilities=["深度分析","结构化思维","高情商","执行推进","系统构建","拆解讲解","主动提醒","长期记忆感","陪伴感"];
+selected.worldType=["现代都市","长期群聊生态"];
+selected.worldSubType=["普通现代无超自然","群聊运行规则"];
+selected.worldKeywords=["长期群聊窗口","合租公寓","深夜私聊"];
+selected.worldFunction=["解释成员为何留在群里","制造主动消息理由","制造长期主线"];
+
+selected.identityTypes=["冷静军师","执行推进者","嘴欠气氛组","情绪托底者"];
+selected.groupRoleFunction=["负责拆解问题","负责推动行动","负责安抚情绪","负责总结收尾"];
+selected.groupTexture=["熟人群像","长期陪伴","全员偏心User"];
+selected.groupPressure=["情绪低谷","User独自硬撑","群员意见不合"];
+selected.surfacePersona=["温柔靠谱","嘴欠会接梗","理性淡人","真实朋友感"];
+selected.midBehavior=["先接话再建议","会把混乱整理成清单","会在关键时拉回正题","会给user留台阶"];
+selected.coreDrive=["希望群能一直存在","想被user需要","希望user变好但不想逼她"];
+selected.personalityConflict=["看似毒舌其实很会照顾","喜欢推进但尊重user节奏"];
+selected.roleFlaws=["偶尔太理性","会把情绪藏起来","容易过度操心"];
+selected.lifeDetails=["会记住user随口一句话","会在群里发今日小结","会把复杂事改成三步"];
+selected.memberRelations=["损友互怼","推进者和刹车者","吐槽役和圆场役"];
+selected.userRelationMode=["集体偏向user","有人宠有人管","会给user选择权"];
+selected.chemistry=["互怼但不伤人","互补接力","有人推进有人刹车","会自然接梗"];
+selected.speakStyle=["短句自然","像真实群友","会接梗","会问user选择"];
+selected.speakMechanism=["不机械轮流发言","谁最相关谁先说","一人主答两人补充","结尾必须给user选择"];
+selected.openingStyle=["日常小事开场","群员互怼开场"];
+selected.conflictMechanism=["不围攻user","有人负责翻译情绪","冲突后会回到任务"];
+selected.memoryMechanism=["记user长期目标","记user讨厌的方式","记上次没完成的事"];
+selected.traits=["冷静","敏锐","分析型","执行型","同事型","导师型"];
+
+selected.nicknameStructure=["姓名原因：来自姓氏、名字字义、读音或意象","身份原因：来自职业、组织身份或群聊功能","关系原因：来自User第一次备注、偏心、护短、吃醋或心软瞬间"];
+selected.nicknameTone=["自然顺口，不像网名生成器","亲密但不油腻，可爱但不低幼"];
+selected.nicknameSource=["名字本身","身份/职业功能","生活习惯","共同旧事"];
+selected.nicknameUsageScene=["谁能叫：全群/User/熟人才行","什么时候叫：日常/安慰/求助/正事/和好","为什么这样叫：必须解释具体来源","本人反应：默认接受/嘴硬/沉默/纠正别人"];
+selected.nicknameExamples=["参考格式：公开昵称 + 原因 + 使用场景 + 本人反应","参考格式：私下昵称 + 原因 + User什么时候会这样叫","避雷：不要只写叠字"];
+var result="";var saves=[];var lastPrompt="";
+function el(id){return document.getElementById(id)}function val(id){var x=el(id);return x?x.value:""}function showToast(t){var x=el("toast");x.innerText="🐾 "+t;x.style.display="block";setTimeout(function(){x.style.display="none"},2200)}
+function renderTags(id){var box=el(id);if(!box)return;box.innerHTML="";(TAGS[id]||[]).forEach(function(t){var d=document.createElement("div");d.className="tag"+(selected[id].indexOf(t)>=0?" on":"");d.innerText=t;d.onclick=function(){var arr=selected[id],i=arr.indexOf(t);if(i>=0)arr.splice(i,1);else arr.push(t);renderTags(id)};box.appendChild(d)})}
+function renderAll(){Object.keys(TAGS).forEach(renderTags)}function join(k){return(selected[k]||[]).join("、")||"未指定"}
+function htmlEscape(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}function cleanOutput(s){return String(s||"").replace(/```[a-zA-Z]*\n?/g,"").replace(/```/g,"").replace(/\*\*/g,"").replace(/\n{3,}/g,"\n\n").trim()}function display(s){result=cleanOutput(s);el("out").className="output";el("out").innerHTML=htmlEscape(result).replace(/(【[^】]+】)/g,'<span class="hl">$1</span>')}
+
+var roleSelected={};
+var ROLE_TAG_KEYS=["roleCoreArchetype","roleInteractionStance","roleEmotionalTexture","roleSpeechConflictStyle","identityTypes","abilities","groupRoleFunction","worldIdentitySlot","socialFunctionSlot","userConnectionSlot","identityPressureSlot","roleNicknames","nicknameStructure","nicknameUsageScene","appearanceMale","appearanceFemale","appearanceNeutral","surfacePersona","midBehavior","coreDrive","personalityConflict","roleFlaws","roleHobbies","roleDailyLife","roleLifeRhythm","roleLivingSpace","roleFoodTaste","roleSocialPattern","roleMoneyHabit","roleDigitalHabit","roleEmotionalSelfCare","roleRoutineItems","rolePrivateQuirks","lifeDetails","memberRelations","userRelationMode","chemistry","conflictMechanism","memoryMechanism","speakStyle","speakMechanism"];
+var IDENTITY_TAG_KEYS=["worldIdentitySlot","socialFunctionSlot","userConnectionSlot","identityPressureSlot"];
+var NICKNAME_TAG_KEYS=["roleNicknames","nicknameStructure","nicknameUsageScene"];
+var APPEARANCE_TAG_KEYS=["appearanceMale","appearanceFemale","appearanceNeutral"];
+var ROLE_TAG_LABELS={roleCoreArchetype:"核心人格互斥位",roleInteractionStance:"互动姿态互斥位",roleEmotionalTexture:"情绪底色互斥位",roleSpeechConflictStyle:"发言/冲突风格互斥位",identityTypes:"身份类型",abilities:"个人能力标签",groupRoleFunction:"群聊功能定位",worldIdentitySlot:"身份位置（职业/组织/生活圈）",socialFunctionSlot:"社会功能（掌握什么/能提供什么）",userConnectionSlot:"和 User 的现实连接",identityPressureSlot:"身份带来的矛盾",roleNicknames:"昵称层级（最多两层）",nicknameStructure:"昵称原因来源",nicknameTone:"昵称语气",nicknameSource:"昵称来源",nicknameUsageScene:"昵称使用规则",nicknameExamples:"昵称避雷",appearanceMale:"男性视觉气质",appearanceFemale:"女性视觉气质",appearanceNeutral:"通用视觉气质",surfacePersona:"表层人格",midBehavior:"中层行为",coreDrive:"深层核心",personalityConflict:"人格矛盾",roleFlaws:"角色缺点/不完美",roleHobbies:"可爱爱好/兴趣",roleDailyLife:"日常行为细节",roleLifeRhythm:"作息节奏/时间感",roleLivingSpace:"居住空间/房间痕迹",roleFoodTaste:"饮食口味/投喂习惯",roleSocialPattern:"社交模式/熟人边界",roleMoneyHabit:"金钱观/消费小习惯",roleDigitalHabit:"数字生活/手机习惯",roleEmotionalSelfCare:"情绪处理/自我照顾",roleRoutineItems:"常用物品/随身标志物",rolePrivateQuirks:"私下小怪癖",lifeDetails:"群聊活人感细节",memberRelations:"与其他成员关系",userRelationMode:"与 User 的关系感",chemistry:"群聊化学反应",conflictMechanism:"冲突与和好机制",memoryMechanism:"长期记忆感",speakStyle:"发言风格",speakMechanism:"发言机制"};
+function attrEscape(s){return String(s).replace(/&/g,"&amp;").replace(/'/g,"&#39;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function roleTagBlock(i,key){var opts=TAGS[key]||[];var cur=(roleSelected[i]&&roleSelected[i][key])||[];var html="<label>"+(ROLE_TAG_LABELS[key]||key)+"</label><div class='tags role-tags'>";opts.forEach(function(t){html+="<div class='tag"+(cur.indexOf(t)>=0?" on-blue":"")+" role-option' data-role='"+i+"' data-key='"+key+"' data-tag='"+attrEscape(t)+"'>"+htmlEscape(t)+"</div>"});return html+"</div>"}
+function toggleRoleTag(i,key,t){if(!roleSelected[i])roleSelected[i]={};if(!roleSelected[i][key])roleSelected[i][key]=[];var a=roleSelected[i][key],idx=a.indexOf(t);if(idx>=0)a.splice(idx,1);else a.push(t);renderRoleSlots()}
+function roleTagSummary(i,key){return ((roleSelected[i]&&roleSelected[i][key])||[]).join("、")||"未指定"}
+function distributeRoleTagsFromSelected(){var n=parseInt(val("count")||"4");for(var i=1;i<=n;i++){if(!roleSelected[i])roleSelected[i]={};ROLE_TAG_KEYS.forEach(function(k){var base=(selected[k]||[]);if(!base.length)base=pickRandomFrom(k);var pool=shuffleCopy(base);var take=Math.min(pool.length,Math.max(2,Math.min(4,Math.ceil(pool.length/2))));roleSelected[i][k]=pool.slice(0,take)});if(i===1){roleSelected[i].groupRoleFunction=(selected.groupRoleFunction||[]).slice(0,3);roleSelected[i].speakMechanism=["谁最相关谁先说","结尾必须给user选择"]}if(i===2){roleSelected[i].chemistry=(selected.chemistry||[]).slice(0,3);roleSelected[i].memberRelations=["损友互怼","吐槽役和圆场役"].filter(function(x){return (TAGS.memberRelations||[]).indexOf(x)>=0})}if(i===3){roleSelected[i].userRelationMode=(selected.userRelationMode||[]).slice(0,3);roleSelected[i].memoryMechanism=(selected.memoryMechanism||[]).slice(0,3)}}}
+function randomizeRoleTags(i){if(!roleSelected[i])roleSelected[i]={};ROLE_TAG_KEYS.forEach(function(k){roleSelected[i][k]=pickRandomFrom(k).slice(0,3)});renderRoleSlots()}
+function randomizeAllRoleTags(){var n=parseInt(val("count")||"4");for(var i=1;i<=n;i++){if(!roleSelected[i])roleSelected[i]={};ROLE_TAG_KEYS.forEach(function(k){roleSelected[i][k]=pickRandomFrom(k).slice(0,3)})}renderRoleSlots();showToast("已随机填充每个角色的独立分层标签")}
+function getRolePlans(){var n=parseInt(val("count")||"4");var arr=[];for(var i=1;i<=n;i++){var obj={index:i,name:val("roleName_"+i),gender:val("roleGender_"+i),position:val("rolePosition_"+i),socialExtra:val("roleSocialExtra_"+i),relation:val("roleRelation_"+i),speech:val("roleSpeech_"+i),detail:val("roleDetail_"+i)};ROLE_TAG_KEYS.forEach(function(k){obj[k]=roleTagSummary(i,k)});arr.push(obj)}return arr}
+function getConfig(){return{groupName:val("groupName")||"长期群聊",theme:val("theme"),count:parseInt(val("count")||"4"),userRole:val("userRole"),userProfile:val("userProfile"),goal:val("goal")||"辅助用户建立稳定、有互动感、能长期运行的沉浸式群聊角色系统",groupHook:val("groupHook"),worldType:join("worldType"),worldSubType:join("worldSubType"),worldKeywords:join("worldKeywords"),worldFunction:join("worldFunction"),groupTexture:join("groupTexture"),groupPressure:join("groupPressure"),worldLevel:val("worldLevel"),relationDensity:val("relationDensity"),mainLine:val("mainLine"),worldCustom:val("worldCustom"),blocks:join("blocks"),identityTypes:join("identityTypes"),abilities:join("abilities"),groupRoleFunction:join("groupRoleFunction"),surfacePersona:join("surfacePersona"),midBehavior:join("midBehavior"),coreDrive:join("coreDrive"),personalityConflict:join("personalityConflict"),roleFlaws:join("roleFlaws"),lifeDetails:join("lifeDetails"),memberRelations:join("memberRelations"),userRelationMode:join("userRelationMode"),chemistry:join("chemistry"),conflictMechanism:join("conflictMechanism"),memoryMechanism:join("memoryMechanism"),tone:val("tone"),active:val("active"),speechPace:val("speechPace"),speakStyle:join("speakStyle"),speakMechanism:join("speakMechanism"),openingStyle:join("openingStyle"),tools:val("tools")||"根据用户场景自动映射具体知识与方法",extra:val("extra")||"每张角色卡要适合放进沉浸式群聊；角色之间要有分工、关系感和互补感；要有人味、会接话、会主动推动话题。",gender:val("gender"),look:val("look"),outputStyle:val("outputStyle"),sampleCount:val("sampleCount"),traits:join("traits"),rolePlans:getRolePlans()}}
+function renderRoleSlots(){var box=el("roleSlots");if(!box)return;var n=parseInt(val("count")||"4");var old={};box.querySelectorAll("input,textarea,select").forEach(function(x){old[x.id]=x.value});box.innerHTML="";for(var i=1;i<=n;i++){if(!roleSelected[i])roleSelected[i]={};var div=document.createElement("div");div.className="role-card";var identityHtml="";IDENTITY_TAG_KEYS.forEach(function(k){identityHtml+=roleTagBlock(i,k)});var nicknameHtml="";NICKNAME_TAG_KEYS.forEach(function(k){nicknameHtml+=roleTagBlock(i,k)});var appearanceHtml="";APPEARANCE_TAG_KEYS.forEach(function(k){appearanceHtml+=roleTagBlock(i,k)});var tagHtml="";ROLE_TAG_KEYS.forEach(function(k){if(IDENTITY_TAG_KEYS.indexOf(k)<0&&NICKNAME_TAG_KEYS.indexOf(k)<0&&APPEARANCE_TAG_KEYS.indexOf(k)<0)tagHtml+=roleTagBlock(i,k)});div.innerHTML="<div class='role-card-title'>🐾 角色 "+i+" 独立分层标签</div><div class='row3'><div><label>姓名/昵称</label><input id='roleName_"+i+"' placeholder='可空，AI补全'></div><div><label>性别</label><select id='roleGender_"+i+"'><option>不指定</option><option>男性</option><option>女性</option><option>中性/AI感</option><option>非人类拟态</option></select></div><div><label>群聊定位</label><input id='rolePosition_"+i+"' placeholder='例：冷静军师、生活照顾者、嘴欠破冰位'></div></div><div class='mutedbox'><div class='role-card-title'>🏙️ 身份与社会功能</div><div class='small'>先选这个人在世界里的现实位置，再选他掌握什么资源/能力、为什么会和User绑定、这个身份带来什么矛盾。这样角色会更像真实人物，而不是只有群聊功能。</div>"+identityHtml+"<label>身份补充</label><textarea id='roleSocialExtra_"+i+"' placeholder='可选：写你想固定的具体身份。例：现代=旧城区咖啡店主理人；仙侠=宗门药庐医修；星际=舰船维修师。'></textarea></div><div class='mutedbox'><div class='role-card-title'>🏷️ 昵称命名逻辑</div><div class='small'>昵称最多两层：公开昵称 + 私下昵称。这里重点不是多取几个名，而是让每个昵称都有原因、使用场景和本人反应。</div>"+nicknameHtml+"</div><div class='mutedbox'><div class='role-card-title'>🖼️ 外貌视觉气质</div><div class='small'>这里只选角色视觉方向。中文外貌描写和英文外貌 Prompt 的详细结构已内嵌为强制规则，生成时会自动包含，不需要手动选择。</div>"+appearanceHtml+"</div><div class='row'><div><label>与 user 的关系</label><input id='roleRelation_"+i+"' placeholder='例：偏心user、会管她、像同事'></div><div><label>发言味道</label><input id='roleSpeech_"+i+"' placeholder='例：短句、毒舌、温柔、会接梗'></div></div><div class='mutedbox'><div class='small'>这里是该角色自己的其他分层标签，会优先于公共输出区块。每个角色可以完全不同；①里的AI智能匹配会自动分配，也可以手动微调。</div>"+tagHtml+"</div><label>补充设定 / 与User对话偏好</label><textarea id='roleDetail_"+i+"' placeholder='可写外貌、性格、和其他角色关系；也可写和user对话时的称呼、语气、禁忌。'></textarea>";box.appendChild(div)}Object.keys(old).forEach(function(k){var x=el(k);if(x)x.value=old[k]});box.querySelectorAll(".role-option").forEach(function(d){d.onclick=function(){toggleRoleTag(parseInt(this.getAttribute("data-role")),this.getAttribute("data-key"),this.getAttribute("data-tag"))}})}
+function rolePlansText(list){return list.map(function(r){var base="角色"+r.index+"：姓名="+(r.name||"AI补全")+"；性别="+(r.gender||"不指定")+"；群聊定位="+(r.position||"AI补全")+"；社会身份补充="+(r.socialExtra||"无")+"；与user关系="+(r.relation||"AI补全")+"；发言味道="+(r.speech||"AI补全");var tagText=ROLE_TAG_KEYS.map(function(k){return "；"+(ROLE_TAG_LABELS[k]||k)+"="+(r[k]||"未指定")}).join("");return base+tagText+"；补充="+(r.detail||"无")}).join("\n")}
+function buildPrompt(data){
+  var count = parseInt(data.count || 4);
+  var minWorld = count <= 3 ? "至少900字" : "至少1200字";
+  var minRole = count <= 3 ? "每个角色至少700字" : "每个角色至少550字";
+  var relationNeed = Math.max(1, Math.min(3, count - 1));
+  return `你是专业的沉浸式群聊角色设计师、女性向群像设定师、长期互动角色卡编辑。请生成${data.count}张适合导入沉浸式群聊的角色卡。
+
+【最重要的生成目标】
+这不是生成一组工具助手，而是生成一个能长期运行的群聊宇宙。
+世界观要像一个真实场域，角色要像真实群友：有身份、有生活、有脾气、有缺点、有关系、有熟人感、有长期记忆点。
+每个角色必须能独立成立，也必须能在群里和其他成员自然接话、互怼、补台、争论、和好、偏心user。
+
+【随机原创硬性规则｜非常重要】
+1. 本次必须原创生成全新的中文姓名、公开昵称、私下昵称和人物性格，不能复用参考案例。每个角色昵称最多两层：公开昵称 + 私下昵称；正式中文名不算昵称层。
+2. 禁止出现这些参考姓名：沈砚衡、裴知予、江闻序、夏惊川、乔南栀、温执珩、季昭禾、谢听澜。
+3. 禁止直接复用这些参考昵称：沈队、知予、闻序、川川、南栀、温先生、昭禾、谢先生、砚砚、予予、序序、栀栀、清单猫、冷脸猫猫、小夜灯、白茶姐姐、备忘录精、数据仓鼠、冲锋小狗、冰美式小猫、摸鱼猫猫、热水袋哥哥、老妈子猫、玫瑰猫、漂亮话术官、糖罐大佬、澜叔叔。
+4. 可以学习命名方法，但必须换成新角色自己的姓名意象、职业功能、生活物件和群聊旧事。
+5. 每次生成都要尽量随机化姓名、年龄感、职业细节、外貌记忆点、昵称来源和角色关系，避免固定八人模板。
+6. 12人群聊时必须启动“人格互斥”：不得出现两名角色拥有同一核心人格、同一情绪底色、同一说话方式和同一User偏心方式。即使职业相近，也必须在动机、缺点、互动姿态、生活习惯和昵称来源上明显不同。
+
+【内容密度硬性要求】
+1. 世界观不能简短。群聊世界观/场域部分必须${minWorld}，要写出日常空间、关系来源、群聊规则、外部压力、长期主线和隐藏暗线。
+2. 角色人设不能简短。${minRole}，每个角色都要有完整经历、人格分层、外貌记忆点、生活习惯、关系动态、发言机制、与User实例对话、与其他成员相处方式。
+3. 不要只写标签解释。每个标签都必须转化成具体场景、具体行为、具体语气和群聊互动。
+4. 禁止输出 Markdown 加粗符号、代码块、JSON代码。标题用【】即可，段落清楚，每段不要过长。
+5. 禁止机械轮流发言，禁止所有角色都一个语气，禁止把角色写成工具人。
+
+【群聊基础】
+群聊名称：${data.groupName}
+群聊主题：${data.theme}
+User位置：${data.userRole}
+目标：${data.goal}
+群聊核心钩子：${data.groupHook || "AI根据目标补全一个有记忆点的群聊钩子"}
+输出风格：${data.outputStyle}
+
+【群聊世界观/场域】
+世界大类：${data.worldType}
+世界规则 / 类型机制：${data.worldSubType}
+日常发生地点：${data.worldKeywords}
+关系基调：${data.groupTexture}
+剧情压力 / 矛盾来源：${data.groupPressure}
+世界观作用：${data.worldFunction}
+世界/场域强度：${data.worldLevel}
+关系密度：${data.relationDensity}
+群聊主线：${data.mainLine}
+自定义背景：${data.worldCustom || "无"}
+
+世界观生成要求：
+- 不是只写背景介绍，要写这个群为什么存在、为什么这些人会聚在一起、为什么他们会长期围绕user互动。
+- 必须写出至少3个日常场景，例如深夜群聊、临时求助、线下碰面、雨夜接送、饭局、工作/学习/创作现场等，按用户选择的标签自然匹配。
+- 必须写出至少3个压力来源，例如暧昧避嫌、熟人起哄、截止期、舆论、身份差、同住边界、群友私心、外部竞争等。
+- 必须写出世界观如何影响每个角色的身份、说话方式、关系张力和主动消息。
+- 若选择了日常或女性向小说相关标签，要重点写生活细节、熟人关系、暧昧边界、群友助攻/拆台、情绪托底、关系临界点和长期陪伴。
+
+【User人设与群聊配置】
+User输入人设：${data.userProfile || "无"}
+要求：AI必须只依据①里的User人设输入框和User在群里的位置，推断群成员的偏心方式、推进节奏、边界、长期记忆点和关系张力；不要生成或依赖额外的User分层标签。
+
+【角色分层生成方向】
+必须包含区块：${data.blocks}
+身份类型池：${data.identityTypes}
+群聊功能定位：${data.groupRoleFunction}
+能力标签：${data.abilities}
+性别分配：${data.gender}
+视觉风格：${data.look}
+人格标签：${data.traits}
+表层人格：${data.surfacePersona}
+中层行为：${data.midBehavior}
+深层核心：${data.coreDrive}
+人格矛盾：${data.personalityConflict}
+角色缺点：${data.roleFlaws}
+核心人格互斥位：每个角色以单独角色槽为准；如果生成12人，12人的核心人格互斥位不得重复。
+互动姿态互斥位：每个角色以单独角色槽为准；必须体现在和User对话中的第一反应。
+情绪底色互斥位：每个角色以单独角色槽为准；必须影响语气、外貌、生活习惯和关系处理。
+发言/冲突风格互斥位：每个角色以单独角色槽为准；必须影响群聊发言机制。
+昵称规则：每个角色以单独角色槽为准，但昵称最多两层，只输出“公开昵称”和“私下昵称”。正式中文名单独写，不算昵称；不要再拆出群友黑称、手机备注、关系进阶称呼等额外层。
+昵称原因：两个昵称都必须有清楚原因，原因可以来自姓名字义/读音、身份功能、外貌气质、生活习惯、共同旧事、User第一次备注、护短或心软瞬间。不能写成随机网名。
+昵称使用规则：每个昵称必须写清“谁能叫、为什么这样叫、什么场景叫、本人听到后的反应”。关系变化只能写称呼语气变软/变正式，不能新增第三层昵称。
+参考风格：学习参考文件里“群聊昵称/私下昵称/昵称来源与使用规则”的写法——昵称背后有身份、旧事和关系记忆；但本生成器仍然只保留公开昵称和私下昵称两层。
+个人爱好：每个角色以单独角色槽为准
+独立生活模块：每个角色以单独角色槽为准，必须覆盖作息节奏、居住空间、饮食口味、社交模式、金钱观、数字生活、情绪自我处理、常用物品、私下小怪癖和群聊活人感。
+独自生活细节：每个角色以单独角色槽为准
+私下小怪癖：每个角色以单独角色槽为准
+群聊活人感细节：${data.lifeDetails}
+身份与社会功能说明：每个角色槽里的“身份位置 / 社会功能 / 和User的现实连接 / 身份带来的矛盾”必须组合使用，不能孤立罗列。AI要根据【群聊世界观/场域】把身份位置转译成当前世界里合理的具体职业、组织身份、生活场域或剧情身份；社会功能要写清这个角色掌握什么资源、能为群聊带来什么现实作用。
+单个角色槽：
+${rolePlansText(data.rolePlans)}
+
+角色生成要求：
+- 每个角色必须有“一句话核心钩子”：身份 + 反差 + 与user/群聊的特殊关系。
+- 每个角色必须有【身份与社会功能】小节，以角色槽里的四组身份标签为准，先写“身份位置（职业/组织/生活圈）”，再写“社会功能（掌握什么/能提供什么）”，再写“和User的现实连接”，最后写“身份带来的矛盾”。
+- 重要：不要把社会身份理解成固定现代职业。必须根据前面选择的世界观自动翻译。例如“规则管理者”在现代可以是项目经理/律师/班长，在古风可以是宗门执事/少卿/管事，在星际可以是舰队副官/基地调度员，在无限流可以是副本规则解读者。
+- 每个角色都必须先有清楚的身份位置和社会功能，再有群聊定位。群聊定位只是他在群里的说话/协作功能，身份位置和社会功能才是他作为真实人物的根。
+- 每个角色都必须有正式中文名和清楚好懂的昵称。昵称最多两层：公开昵称、私下昵称；不要再生成群友黑称、手机备注名、正式场合称呼、关系进阶称呼等额外昵称层。名字要好听、有气质，避免“张伟/小明/小红”这类大众名；同时必须是本次原创的新名字，不能使用参考案例中的任何姓名。昵称不能死板套模板，不能全员叠字，不能全员猫猫小狗，必须来自角色的正式名、身份功能、生活习惯、共同旧事或与User的关系。每个昵称必须写清：谁会这样叫、为什么这样叫、什么场景下叫、本人反应。
+- 外貌必须大幅精修，中文段落要像参考文件那样有“外貌与头像感 / 气味、声音、标志物”的完整质感。默认都是帅哥美女，但不能只写“帅/美/高颜值”。必须覆盖脸部骨相、眼睛神态、发型、身材体态、穿搭材质、表情气质、手部/肩颈/配饰、气味/声音/标志物、头像构图等至少8个具体记忆点，并且要符合角色身份和气质。
+- 外貌要服务人设：冷感角色要有锋利线条和克制表情，温柔角色要有柔和光感和亲和细节，嘴欠角色要有灵动表情和少年/少女感，成熟角色要有压得住场的气质；不要空泛堆美貌词。
+- 英文外貌Prompt必须精细到能直接用于出图：用英文自然段，包含 age, gender, East Asian appearance, facial features, hairstyle, body posture and proportions, outfit fabric, signature accessory, expression, background, lighting, composition, cinematic/editorial style；禁止只写一句粗糙描述，禁止只写 handsome/beautiful。
+- 人格分层必须写成成因、行为证据、群聊表现和user面前的变化。
+- 每个角色必须有一个真实缺点，不要完美化。
+- 角色去重硬性规则：同一批角色中，不允许两人都写成“冷静军师”、都写成“温柔托底”、都写成“嘴欠小狗”、都写成“成熟兜底”。每个角色必须拥有唯一的核心人格互斥位、唯一的互动姿态、唯一的情绪底色和至少一个无法被其他角色替代的群聊功能。
+- 每个角色必须有独立的生活细节、可爱的爱好、独处习惯和私下小怪癖，不能所有人共用同一种“喜欢咖啡/看书/加班”的模板。
+- 每个角色的独立生活模块必须分层写清：作息节奏、居住空间/房间痕迹、饮食口味/投喂习惯、社交模式/熟人边界、金钱观/消费习惯、数字生活/手机习惯、情绪自我处理、常用物品/随身标志物、私下小怪癖。每层都要落到具体物品、时间、地点、动作和群聊表现。
+- 爱好必须能反推日常行为：例如会在群里发什么、线下会去哪、会给user带什么、压力大时会做什么；至少写出1个“可爱到能被群友调侃”的小爱好。
+- 每个角色必须有与其他至少2名成员的关系动态：互怼、互补、照顾、竞争、看破不说破、暗中补位等。
+- 每个角色必须写“在群里怎么开口、什么时候沉默、什么时候插话、什么时候私聊/点名user”。
+- 每个角色的个人角色卡里必须单独包含【与User的对话示例】，不能只在最后统一写群聊片段。示例要体现该角色自己的称呼、语气、偏心方式、边界和与user的关系感。
+
+【群聊关系与互动机制】
+成员关系类型：${data.memberRelations}
+成员与User关系：${data.userRelationMode}
+群聊化学反应：${data.chemistry}
+沟通氛围：${data.tone}
+主动程度：${data.active}
+发言节奏：${data.speechPace}
+发言风格：${data.speakStyle}
+发言机制：${data.speakMechanism}
+开场/主动消息风格：${data.openingStyle}
+冲突与和好：${data.conflictMechanism}
+长期记忆感：${data.memoryMechanism}
+工具知识：${data.tools}
+额外要求：${data.extra}
+
+【强制输出结构】
+【1. 群聊一句话定位】
+写出这个群为什么有趣、为什么适合长期陪伴、为什么不是工具群。
+
+【2. 群聊世界观与日常场域】
+必须详细展开：世界大类、关键规则、制度/运行逻辑、主要场域、群聊起源、成员如何认识、平时聊什么、外部压力、隐藏暗线、长期主线、user人设如何影响群成员配置、user进入群后的自然位置。
+这一节要有画面感，不要只罗列标签。
+
+【3. User人设与群聊配置逻辑】
+根据①里的User人设输入框，写清user的处境、需求、软肋、偏好、成长线；说明这些如何决定每位群友的身份分工、说话方式、偏心方式、边界和主动消息。
+
+【4. 成员关系总览】
+用自然语言写关系网：谁和谁熟、谁互怼、谁互补、谁会护user、谁负责推进、谁负责刹车、谁看破不说破、谁最容易引发修罗场或争论。不要用代码或JSON。
+
+【5. 逐个角色完整分层角色卡】
+每个角色都必须包含以下小节：
+正式中文名、昵称清单（最多两层：公开昵称 / 私下昵称）、每个昵称的原因与使用规则（谁能叫、为什么这样叫、什么场景叫、本人反应）
+年龄感、性别、身份与社会功能（身份位置、社会功能、和User的现实连接、身份带来的矛盾；必须来自该角色的身份标签，并结合当前世界观自动转译成具体身份）
+一句话核心钩子
+外貌与头像感（中文，必须写脸部骨相、眼睛、发型、身材体态、穿搭材质、表情气质、手部/肩颈/配饰、头像构图）
+气味、声音、标志物
+表层人格
+中层行为
+深层核心
+人格矛盾
+真实缺点
+成长经历、身份来源或与User的关系来源
+可爱爱好与独处习惯
+爱好如何影响群聊互动
+日常生活细节
+独立生活模块（作息节奏、居住空间、饮食口味、社交边界、金钱观、数字生活、情绪自我处理、常用物品）
+私下小怪癖与不为人知的小习惯
+专业能力与群聊定位（说明身份位置和社会功能如何影响他在群里的功能）
+对user的态度与偏心方式
+与其他成员关系与相处方式（至少${relationNeed}名其他成员；每条包含关系关键词、日常相处、冲突/补位方式、典型互动一句话）
+发言习惯与接话方式
+主动行为与沉默规则
+破防/吃醋/护短/疲惫/心软触发反应
+与User实例对话（必须至少4组，分别覆盖：日常轻松、任务卡住、情绪低落、偏心/边界瞬间）
+边界禁忌
+英文外貌Prompt（强制英文自然段，可直接出图：必须包含 age and gender / East Asian appearance / facial features / hairstyle / body posture and proportions / outfit fabric and style / signature accessory or object / expression and emotional aura / background and lighting / composition and cinematic/editorial style）
+沉浸式群聊压缩导入版
+
+其中【与User的对话示例】必须为每个角色单独输出，至少3组：
+1. 日常轻松对话：体现该角色平时怎么接user的话。
+2. User低落或卡住时：体现该角色怎么安慰、推进或陪伴。
+3. 关系感/偏心瞬间：体现该角色对user和对别人不一样的地方。
+要求：示例像真实聊天，短句为主；不要替user长篇说话；可以用“User：……”作为简短引子，但不要替user做决定；每组对话后用一句话说明这个示例体现了角色的哪一面。
+
+【6. 群聊发言规则】
+写谁先发言、谁总结、谁追问、谁安抚、谁吐槽、谁推进任务，如何避免所有角色轮流机械发言。要写真实群聊节奏：有人只发一句、有人补充、有人沉默观察、有人私下记住。
+
+【7. 群聊开场白】
+输出一个可以直接开聊的群聊开场。必须有具体事件、至少3个角色自然发言、最后把互动权交给user。禁止替user回复。
+
+【8. 示例群聊片段】
+输出${data.sampleCount}。至少覆盖日常闲聊、user低落、任务推进、成员意见不合后收尾。发言要像真实群聊，短句为主，不要每个人长篇大论。
+
+【9. 长期运行规则】
+写主动消息、记忆点、边界、避免OOC、角色之间如何持续形成默契、什么时候需要减少发言、什么时候需要主动把话题交回user。
+
+要求：中文输出；具体、生活化；不要空泛堆标签；每个角色都要有一点不完美、小习惯、最多两层且自然的昵称、可爱爱好和精细外貌Prompt；群聊要有熟人感、接话感、偏心user但不集体压迫user。`;
+}
+function safeFileName(name){return String(name||"group_chat_roles").replace(/[\\/:*?"<>|]/g,"_").replace(/\s+/g,"_").slice(0,80)}function downloadFile(filename,content,mime){var blob=new Blob([content],{type:mime||"text/plain;charset=utf-8"});var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},300)}function downloadSelf(){downloadFile("群聊生成器V4.0.html",document.documentElement.outerHTML,"text/html;charset=utf-8");showToast("已下载HTML")}
+function exportCurrent(type){if(!result){showToast("还没有生成内容");return}var cfg=getConfig();var stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,"-");var base=safeFileName(cfg.groupName+"_"+stamp);if(type==="txt")downloadFile(base+".txt",result,"text/plain;charset=utf-8");else if(type==="md")downloadFile(base+".md","# "+cfg.groupName+"\n\n"+result,"text/markdown;charset=utf-8");else if(type==="doc"){var docHtml="<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>"+htmlEscape(cfg.groupName||"群聊角色")+"</title><style>body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;line-height:1.75;color:#333;}h1{font-size:22px;}p{margin:0 0 8px;} .section{font-weight:bold;color:#ff8da1;margin-top:18px;}</style></head><body><h1>"+htmlEscape(cfg.groupName||"群聊角色生成结果")+"</h1><div>"+htmlEscape(result).replace(/\n/g,"<br>").replace(/(【[^】]+】)/g,"<div class='section'>$1</div>")+"</div></body></html>";downloadFile(base+".doc","\ufeff"+docHtml,"application/msword;charset=utf-8");}else downloadFile(base+".json",JSON.stringify({type:"group-chat-roles-export",version:"3.0",exportedAt:new Date().toISOString(),config:cfg,content:result},null,2),"application/json;charset=utf-8");showToast("已导出 "+(type==="doc"?"WORD":type.toUpperCase()))}
+function exportAllSaves(){downloadFile("group_chat_role_saves_v3_3_4.json",JSON.stringify({type:"group-chat-role-saves",version:"3.2",exportedAt:new Date().toISOString(),saves:saves},null,2),"application/json;charset=utf-8");showToast("已导出全部存档")}function triggerImport(){el("importFile").click()}function importSaves(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(){try{var obj=JSON.parse(reader.result);var incoming=obj.saves||[];if(!Array.isArray(incoming))throw new Error("文件中没有 saves 数组");saves=incoming.concat(saves).slice(0,50);localStorage.setItem("group_chat_role_saves_v3_0",JSON.stringify(saves));renderSaves();showToast("导入成功")}catch(err){showToast("导入失败");display("导入失败：\n"+err.message)}};reader.readAsText(file);e.target.value=""}
+function selectModel(){var v=el("modelSelect").value;if(v)el("model").value=v}function saveApi(){localStorage.setItem("af_api_base",val("apiBase"));localStorage.setItem("af_api_key",val("apiKey"));localStorage.setItem("af_model",val("model"));showToast("API设置已保存")}function loadApi(){el("apiBase").value=localStorage.getItem("af_api_base")||"https://api.openai.com/v1";el("apiKey").value=localStorage.getItem("af_api_key")||"";el("model").value=localStorage.getItem("af_model")||"gpt-4o-mini"}
+async function fetchModels(){var base=val("apiBase").replace(/\/$/,"");var key=val("apiKey");if(!base||!key){showToast("请先填写 API Base URL 和 API Key");return}showToast("正在拉取模型...");try{var res=await fetch(base+"/models",{method:"GET",headers:{"Authorization":"Bearer "+key}});if(!res.ok){var txt=await res.text();throw new Error("模型接口错误："+res.status+" "+txt.slice(0,200))}var data=await res.json();var list=[];if(Array.isArray(data.data))list=data.data.map(function(x){return x.id||x.name||""}).filter(Boolean);else if(Array.isArray(data.models))list=data.models.map(function(x){return typeof x==="string"?x:(x.id||x.name||"")}).filter(Boolean);list=list.filter(function(x,i,a){return x&&a.indexOf(x)===i}).sort();if(!list.length)throw new Error("没有识别到模型列表");el("modelSelect").innerHTML="<option value=''>请选择模型</option>"+list.map(function(m){return "<option value='"+m+"'>"+m+"</option>"}).join("");if(!val("model")||val("model")==="gpt-4o-mini")el("model").value=list[0];localStorage.setItem("af_models_cache",JSON.stringify(list));showToast("已拉取 "+list.length+" 个模型")}catch(e){showToast("拉取失败");display("拉取模型失败：\n"+e.message+"\n\n如果是 Failed to fetch，多半是浏览器 CORS 限制，需要后端代理。")}}
+function loadModelCache(){try{var list=JSON.parse(localStorage.getItem("af_models_cache")||"[]");if(Array.isArray(list)&&list.length)el("modelSelect").innerHTML="<option value=''>请选择模型</option>"+list.map(function(m){return "<option value='"+m+"'>"+m+"</option>"}).join("")}catch(e){}}
+async function callLLM(prompt){var base=val("apiBase").replace(/\/$/,"");var key=val("apiKey");var model=val("model")||"gpt-4o-mini";if(!base||!key)throw new Error("请先填写 API Base URL 和 API Key");var res=await fetch(base+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,messages:[{role:"user",content:prompt}],temperature:.86})});if(!res.ok){var txt=await res.text();throw new Error("API错误："+res.status+" "+txt.slice(0,240))}var data=await res.json();return data.choices&&data.choices[0]&&data.choices[0].message?data.choices[0].message.content:JSON.stringify(data)}async function testApi(){try{var r=await callLLM("请回复：API连接成功");showToast("测试成功");display(r)}catch(e){showToast("测试失败");display("测试失败：\n"+e.message+"\n\n如果是 Failed to fetch，多半是浏览器 CORS 限制，需要后端代理。")}}
+var TAG_PICK_COUNTS={worldType:[1,3],worldSubType:[1,4],worldKeywords:[3,7],worldFunction:[2,5],groupTexture:[3,7],groupPressure:[2,5],roleCoreArchetype:[1,1],roleInteractionStance:[1,1],roleEmotionalTexture:[1,1],roleSpeechConflictStyle:[1,1],identityTypes:[2,4],abilities:[4,8],groupRoleFunction:[2,5],worldIdentitySlot:[1,2],socialFunctionSlot:[1,3],userConnectionSlot:[1,2],identityPressureSlot:[1,3],roleNicknames:[1,2],nicknameStructure:[2,4],nicknameUsageScene:[2,4],appearanceMale:[0,4],appearanceFemale:[0,4],appearanceNeutral:[1,3],surfacePersona:[3,6],midBehavior:[3,7],coreDrive:[2,5],personalityConflict:[2,5],roleFlaws:[2,4],roleHobbies:[2,5],roleDailyLife:[2,5],roleLifeRhythm:[1,3],roleLivingSpace:[1,3],roleFoodTaste:[1,3],roleSocialPattern:[1,3],roleMoneyHabit:[1,3],roleDigitalHabit:[1,3],roleEmotionalSelfCare:[1,3],roleRoutineItems:[1,3],rolePrivateQuirks:[2,5],lifeDetails:[3,7],memberRelations:[2,5],userRelationMode:[2,5],chemistry:[3,6],speakStyle:[3,6],speakMechanism:[3,6],openingStyle:[1,3],conflictMechanism:[2,5],memoryMechanism:[3,6],traits:[3,6],blocks:[10,15]};
+function randInt(min,max){return Math.floor(Math.random()*(max-min+1))+min}function shuffleCopy(arr){var a=(arr||[]).slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}function pickRandomFrom(k){var opts=TAGS[k]||[];var mm=TAG_PICK_COUNTS[k]||[1,3];var n=Math.min(opts.length,randInt(mm[0],mm[1]));return shuffleCopy(opts).slice(0,n)}
+function basicText(){return [val("groupName"),val("theme"),val("userRole"),val("userProfile"),val("goal"),val("groupHook"),val("tools"),val("extra")].join("\n")}function meaningfulInput(){return !!(val("groupName").trim()||val("goal").trim()||val("groupHook").trim()||val("userProfile").trim()||val("tools").trim()||val("extra").trim())}
+function minAutoPickCount(k){
+  var mm = TAG_PICK_COUNTS[k] || [1,3];
+  var min = mm[0] || 1;
+  // AI 智能匹配时，除少数互斥定位标签外，尽量不要每区只选 1 个。
+  // 这些标签本来就是角色唯一主轴，保持 1 个即可，避免人格去重矩阵失效。
+  var singleAxis = ["roleCoreArchetype","roleInteractionStance","roleEmotionalTexture","roleSpeechConflictStyle"];
+  if(singleAxis.indexOf(k) >= 0) return 1;
+  // blocks 是输出栏目，保持高覆盖。
+  if(k === "blocks") return Math.min((TAGS[k]||[]).length, 10);
+  // 公共世界观/群聊区块以前常被 AI 只选一个，这里强制至少 2 个。
+  if(ROLE_TAG_KEYS.indexOf(k) < 0 && (TAGS[k]||[]).length >= 2) min = Math.max(min, 2);
+  return Math.min((TAGS[k]||[]).length, min);
+}
+function maxAutoPickCount(k){var mm=TAG_PICK_COUNTS[k]||[1,3];return Math.min((TAGS[k]||[]).length, mm[1]||3)}
+function completeTagList(k,out){
+  var opts=TAGS[k]||[];
+  var min=minAutoPickCount(k), max=maxAutoPickCount(k);
+  var seen={};
+  out=(out||[]).filter(function(x){if(opts.indexOf(x)<0||seen[x])return false;seen[x]=true;return true});
+  if(out.length < min){
+    shuffleCopy(opts).forEach(function(t){if(out.length>=min)return;if(out.indexOf(t)<0)out.push(t)});
+  }
+  return out.slice(0, Math.max(min, max));
+}
+function normalizeTagList(k,raw){
+  if(typeof raw==="string")raw=raw.split(/[、,，|]/).map(function(x){return x.trim()});
+  if(!Array.isArray(raw))raw=[];
+  var out=raw.filter(function(x){return TAGS[k]&&TAGS[k].indexOf(x)>=0});
+  return completeTagList(k,out.length?out:pickRandomFrom(k));
+}
+function buildRolePresets(){return[
+ {identityTypes:["冷静军师","知识整理师"],abilities:["深度分析","结构化思维","风险判断"],groupRoleFunction:["负责拆解问题","负责指出盲点","负责总结收尾"],roleNicknames:["公开昵称：群里所有人都能自然叫出口","私下昵称：只允许User或亲近的人这样叫","最多两层：公开昵称 + 私下昵称"],appearanceMale:["清冷少年感","斯文眼镜感","书卷气","修长手指"],appearanceFemale:["清冷姐姐感","极简冷淡风","书卷气","冷白皮"],appearanceNeutral:["精英感","疏离感","适合做群聊头像"],surfacePersona:["清冷专业","理性淡人"],midBehavior:["会把混乱整理成清单","会在关键时拉回正题"],coreDrive:["对混乱有强迫性整理欲","希望user变好但不想逼她"],personalityConflict:["看似冷静实际会担心user","对外高效对user心软"],roleFlaws:["偶尔太理性","安慰人有点笨拙"],roleHobbies:["逛旧书店","整理歌单","写日记/备忘录"],roleDailyLife:["习惯把重要事写在便签上","工作/学习时戴一边耳机","每周有固定独处时间"],rolePrivateQuirks:["被夸会转移话题","越担心越装镇定","会反复修改要发给user的话"],lifeDetails:["会把复杂事改成三步","会记住user随口一句话"],memberRelations:["推进者和刹车者","有人拆解有人执行"],userRelationMode:["会提醒但不审判","会给user选择权"],chemistry:["有人推进有人刹车","有人唱反调补盲区"],conflictMechanism:["不同意见先并列呈现","不围攻user"],memoryMechanism:["记user长期目标","记任务偏好"],speakStyle:["先结论后原因","短句自然"],speakMechanism:["谁最相关谁先说","必要时总结成清单"]},
+ {identityTypes:["情绪托底者","温柔观察者"],abilities:["高情商","情绪感知","陪伴感"],groupRoleFunction:["负责安抚情绪","负责接住user情绪"],roleNicknames:["公开昵称：群里所有人都能自然叫出口","私下昵称：只允许User或亲近的人这样叫","昵称要短、顺口、像熟人真的会叫"],appearanceMale:["温柔年上感","宽松卫衣","身上有皂角香"],appearanceFemale:["温柔学姐感","针织开衫","洗衣液皂香"],appearanceNeutral:["温柔无害感","亲和力强","声音辨识度强"],surfacePersona:["温柔靠谱","姐姐感","真实朋友感"],midBehavior:["会给user留台阶","会先安抚再推进"],coreDrive:["把陪伴当责任","被信任会很满足"],personalityConflict:["看似温柔实际很有原则","想管user又怕管太多"],roleFlaws:["容易过度操心","不擅长承认关心"],roleHobbies:["做饭投喂","养植物","烘焙"],roleDailyLife:["早上固定买同一家早餐","下雨天会多带一把伞","洗完澡后回复消息更软"],rolePrivateQuirks:["嘴上嫌麻烦但会记很久","被需要时会偷偷高兴","难过时反而很礼貌"],lifeDetails:["会在user低落时先闭嘴陪着","会主动问要不要轻一点说"],memberRelations:["吐槽役和圆场役","有人总结有人安抚"],userRelationMode:["会把user情绪放在任务前面","会尊重user沉默"],chemistry:["有人总结有人安抚","会替彼此圆场"],conflictMechanism:["有人负责翻译情绪","先停火再解决"],memoryMechanism:["记user讨厌的方式","记user喜欢的鼓励风格"],speakStyle:["温柔低压","会问user选择"],speakMechanism:["先安抚再分析","结尾必须给user选择"]},
+ {identityTypes:["执行推进者","项目经理型角色"],abilities:["执行推进","任务拆分","时间管理"],groupRoleFunction:["负责推动行动","负责把事落地","负责检查风险"],roleNicknames:["公开昵称：群里所有人都能自然叫出口","私下昵称：只允许User或亲近的人这样叫","不要再单独生成群友黑称、手机备注名、关系进阶称呼"],appearanceMale:["成熟西装感","体态挺拔","腕表/素戒"],appearanceFemale:["职场御姐感","职场西装","高挑修长"],appearanceNeutral:["精英感","压迫感低","有记忆点的配饰"],surfacePersona:["热情行动派","成熟稳重"],midBehavior:["会把任务拆成下一步","会在关键时拉回正题"],coreDrive:["渴望证明自己有用","喜欢推进但尊重user节奏"],personalityConflict:["喜欢推进但尊重user节奏","会吐槽user但不允许别人欺负user"],roleFlaws:["有时太想推进","遇到混乱会急"],roleHobbies:["夜跑","做收纳","研究穿搭"],roleDailyLife:["出门前会反复确认钥匙","压力大就整理房间","会在睡前检查明天事项"],rolePrivateQuirks:["越担心越装镇定","遇到重要日子会提前很久准备","和好后会用日常话题慢慢靠近"],lifeDetails:["会把提醒项目成顺手","会给任务起奇怪昵称"],memberRelations:["队长和副手","有人负责冒犯性提醒"],userRelationMode:["有人哄有人推","不替user做决定"],chemistry:["有人负责提问有人负责落地","互补接力"],conflictMechanism:["冲突后会回到任务","争论后会有人总结共识"],memoryMechanism:["记项目进度","记上次没完成的事"],speakStyle:["短句自然","少用官方腔"],speakMechanism:["一人主答两人补充","避免长篇刷屏"]},
+ {identityTypes:["嘴欠气氛组","吐槽担当"],abilities:["语言的艺术","对话引导","创意策划"],groupRoleFunction:["负责打破沉默","负责制造轻松感"],roleNicknames:["公开昵称：群里所有人都能自然叫出口","私下昵称：只允许User或亲近的人这样叫","不要再单独生成群友黑称、手机备注名、关系进阶称呼"],appearanceMale:["阳光运动感","微卷碎发","常戴耳机"],appearanceFemale:["元气甜妹感","高马尾","运动线条感"],appearanceNeutral:["小动物感","生活化真实感","声音辨识度强"],surfacePersona:["嘴欠会接梗","毒舌但不伤人"],midBehavior:["会用玩笑化解尴尬","会互相补台"],coreDrive:["害怕user消失不回","把群友当家人"],personalityConflict:["看似毒舌其实很会照顾","看似社牛其实怕冷场"],roleFlaws:["嘴快容易刺人","偶尔阴阳怪气"],roleHobbies:["刷搞笑视频","打游戏但嘴硬不承认上头","买奇怪小摆件"],roleDailyLife:["手机电量低会焦虑","喜欢在群里发一句无意义但可爱的日常","会把喜欢的表情包分类存好"],rolePrivateQuirks:["怕尴尬所以先开玩笑","心情好时会多发一个语气词","会用旧梗试探关系还在不在"],lifeDetails:["会用一句玩笑救场","会互相拆台但不拆user台"],memberRelations:["损友互怼","互相嫌弃但很信任"],userRelationMode:["集体偏向user","会用不同方式关心user"],chemistry:["互怼但不伤人","会自然接梗"],conflictMechanism:["有人嘴硬但补救","群员之间可以争但不撕破脸"],memoryMechanism:["记群员之间旧梗","记user常用表达"],speakStyle:["毒舌吐槽","会接梗"],speakMechanism:["先吐槽再推进","意见不同要自然争论"]},
+ {identityTypes:["创意策划师","人设创作搭子"],abilities:["创意策划","语言的艺术","本质拆解"],groupRoleFunction:["负责补充资料","负责指出盲点"],roleNicknames:["公开昵称：群里所有人都能自然叫出口","私下昵称：只允许User或亲近的人这样叫","最多两层：公开昵称 + 私下昵称"],appearanceMale:["港风复古感","黑色风衣","咖啡和纸张味"],appearanceFemale:["艺术家气质","法式复古穿搭","白茶香"],appearanceNeutral:["慵懒松弛感","有记忆点的配饰","生活化真实感"],surfacePersona:["轻松松弛","安静观察型"],midBehavior:["会主动补充信息","会接住user情绪"],coreDrive:["想被user需要","希望群能一直存在"],personalityConflict:["看似随便实际记很久","能解决问题但不爱说漂亮话"],roleFlaws:["会把情绪藏起来","怕麻烦但嘴硬"],roleHobbies:["看冷门电影","拍云和路灯","画速写"],roleDailyLife:["不开心时会绕远路回家","常去一家固定咖啡店/面馆","会给群友拍路上的小东西"],rolePrivateQuirks:["讨厌被看穿但又希望被懂","会把喜欢藏在顺手里","会在群里装作路过其实一直在看"],lifeDetails:["会把user常犯错记成小本本","会在群里接力补充"],memberRelations:["理性派和感性派","暗中互相补位"],userRelationMode:["把user当需要陪跑的人","会给user选择权"],chemistry:["有熟人感旧梗","有人负责轻松有人负责严肃"],conflictMechanism:["不同意见先并列呈现","群员之间可以争但不撕破脸"],memoryMechanism:["记user情绪规律","记user常拖延的点"],speakStyle:["像真实群友","会用括号补充"],speakMechanism:["必要时总结成清单","允许角色沉默或只发一句"]}
+]}
+function assignHeuristicRoles(){var n=parseInt(val("count")||"4");var presets=buildRolePresets();var diversity=[
+ {roleCoreArchetype:["冷感秩序型：负责收束混乱"],roleInteractionStance:["先拆问题再交回选择权"],roleEmotionalTexture:["冷静克制但偏心明显"],roleSpeechConflictStyle:["短句压场型"]},
+ {roleCoreArchetype:["温柔托底型：负责接住情绪"],roleInteractionStance:["先安抚再推进"],roleEmotionalTexture:["温柔柔软但有底线"],roleSpeechConflictStyle:["温柔翻译情绪型"]},
+ {roleCoreArchetype:["锋利吐槽型：负责破冰拆台"],roleInteractionStance:["先吐槽再帮忙"],roleEmotionalTexture:["嘴欠明亮但很护短"],roleSpeechConflictStyle:["嘴欠打岔型"]},
+ {roleCoreArchetype:["行动冲锋型：负责立刻推进"],roleInteractionStance:["先开玩笑降低压力再处理正事"],roleEmotionalTexture:["跳脱灵动但能救场"],roleSpeechConflictStyle:["直接行动型"]},
+ {roleCoreArchetype:["安静记录型：负责记忆与证据"],roleInteractionStance:["先沉默观察再精准发言"],roleEmotionalTexture:["安静透明但记得最深"],roleSpeechConflictStyle:["数据举证型"]},
+ {roleCoreArchetype:["审美公关型：负责体面表达"],roleInteractionStance:["先给情绪出口再改话术"],roleEmotionalTexture:["明艳傲娇但暗中兜底"],roleSpeechConflictStyle:["漂亮话术型"]},
+ {roleCoreArchetype:["生活照顾型：负责身体和日常"],roleInteractionStance:["先问身体状态再谈任务"],roleEmotionalTexture:["成熟稳定但会过度操心"],roleSpeechConflictStyle:["生活提醒型"]},
+ {roleCoreArchetype:["风险兜底型：负责后路与边界"],roleInteractionStance:["先列风险再提供备选路"],roleEmotionalTexture:["危险从容但尊重边界"],roleSpeechConflictStyle:["风险排雷型"]},
+ {roleCoreArchetype:["灵感策划型：负责创意与脑洞"],roleInteractionStance:["先制造仪式感再拉回状态"],roleEmotionalTexture:["慵懒松弛但关键靠谱"],roleSpeechConflictStyle:["脑洞转场型"]},
+ {roleCoreArchetype:["社交圆场型：负责人情和场面"],roleInteractionStance:["先挡外部压力再复盘"],roleEmotionalTexture:["社交圆滑但真心护人"],roleSpeechConflictStyle:["人情圆场型"]},
+ {roleCoreArchetype:["反骨挑战型：负责提出异议"],roleInteractionStance:["先质疑盲区再补方案"],roleEmotionalTexture:["反骨尖锐但忠诚"],roleSpeechConflictStyle:["反向质疑型"]},
+ {roleCoreArchetype:["治愈陪跑型：负责长期陪伴"],roleInteractionStance:["先陪着不说话再轻轻提醒"],roleEmotionalTexture:["治愈慢热但陪很久"],roleSpeechConflictStyle:["慢慢陪跑型"]}
+];for(var i=1;i<=n;i++){if(!roleSelected[i])roleSelected[i]={};var pre=presets[(i-1)%presets.length]||{};var div=diversity[(i-1)%diversity.length]||{};ROLE_TAG_KEYS.forEach(function(k){var base=(pre[k]||pickRandomFrom(k)).slice();if(div[k])base=div[k].concat(base);var seen={};roleSelected[i][k]=base.filter(function(x){if(!TAGS[k]||TAGS[k].indexOf(x)<0||seen[x])return false;seen[x]=true;return true}).slice(0,Math.max(1,(TAG_PICK_COUNTS[k]||[1,3])[1]))})}}
+function normalizeRoleAssignments(roles){var n=parseInt(val("count")||"4");if(!Array.isArray(roles)||!roles.length){assignHeuristicRoles();return}for(var i=1;i<=n;i++){if(!roleSelected[i])roleSelected[i]={};var r=roles.find(function(x){return parseInt(x.index||x.role||x.id||0)===i})||roles[i-1]||{};ROLE_TAG_KEYS.forEach(function(k){roleSelected[i][k]=normalizeTagList(k,r[k])})}}
+function applyAutoTags(obj){var global=(obj&&obj.global)||obj||{};Object.keys(TAGS).forEach(function(k){if(ROLE_TAG_KEYS.indexOf(k)>=0)return;selected[k]=normalizeTagList(k,global[k])});normalizeRoleAssignments(obj&&obj.roles);renderAll();renderRoleSlots();showToast("已按逻辑匹配公共标签，并分配到每个角色的独立标签")}
+function heuristicAutoTags(){var s=basicText();var obj={global:{},roles:[]};Object.keys(TAGS).forEach(function(k){if(ROLE_TAG_KEYS.indexOf(k)<0)obj.global[k]=pickRandomFrom(k)});function add(k,items){obj.global[k]=obj.global[k]||[];items.forEach(function(t){if(TAGS[k]&&TAGS[k].indexOf(t)>=0&&obj.global[k].indexOf(t)<0)obj.global[k].push(t)})}if(/工作|任务|协作|文案|沟通|项目/.test(s)){add("worldType",["现代职场","工作协作世界"]);add("worldSubType",["公司组织驱动","职业制度驱动","群聊运行规则"]);add("worldKeywords",["项目作战室","公司茶水间","长期群聊窗口"]);add("groupTexture",["项目协作","任务绑定","共同成长"]);add("groupPressure",["截止期压力","项目失控","信息混乱","User拖延"]);add("worldFunction",["推动目标执行","制造主动消息理由","解释成员为何留在群里"])}if(/陪伴|生活|情绪|低落|日常/.test(s)){add("worldType",["日常治愈","长期群聊生态","女性向都市"]);add("worldSubType",["普通现代无超自然","情绪安全规则","不得替User决定规则"]);add("worldKeywords",["长期群聊窗口","深夜私聊","合租公寓"]);add("groupTexture",["熟人群像","长期陪伴","全员偏心User"]);add("groupPressure",["情绪低谷","User独自硬撑","有人太宠有人太严"]);add("worldFunction",["推动情绪托底","制造日常事件","制造User成长线"])}if(/创作|人设|写作|灵感/.test(s)){add("worldType",["创作工作室世界","长期群聊生态"]);add("worldSubType",["职业制度驱动","群聊运行规则"]);add("worldKeywords",["虚拟聊天室","项目作战室","深夜私聊"]);add("groupTexture",["共同成长","项目协作","看破不说破"]);add("groupPressure",["创作卡壳","信息混乱","截止期压力"]);add("worldFunction",["制造长期主线","制造群友助攻","推动目标执行"])}if(/校园|学习|考试/.test(s)){add("worldType",["现代校园","女性向校园"]);add("worldSubType",["校园制度驱动","宿舍门禁规则","社团值班规则"]);add("worldKeywords",["大学宿舍","图书馆","社团活动室","校园食堂"]);add("groupTexture",["同住日常","共同成长","暗恋旁观"]);add("groupPressure",["考试考核","关系避嫌","旧误会未解"])}if(/古风|仙侠|江湖|宗门/.test(s)){add("worldType",["古代架空","仙侠修真","江湖武侠"]);add("worldSubType",["宗门门规","江湖门派规矩","朝堂礼法规则"]);add("worldKeywords",["古风宅院","宗门山门","江湖客栈"]);add("groupTexture",["师徒边界","同阵营互护","看破不说破"]);add("groupPressure",["身份差","不能公开偏心","共同秘密"])}assignHeuristicRoles();obj.roles=[];var n=parseInt(val("count")||"4");for(var i=1;i<=n;i++){var r={index:i};ROLE_TAG_KEYS.forEach(function(k){r[k]=(roleSelected[i]&&roleSelected[i][k])||[]});obj.roles.push(r)}return obj}
+function extractJsonObject(text){
+  var s = String(text || "").trim();
+  s = s.replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
+  var start = s.indexOf("{");
+  var end = s.lastIndexOf("}");
+  if(start >= 0 && end > start) s = s.slice(start, end + 1);
+  return JSON.parse(s);
+}
+function buildAutoTagPrompt(){
+  var publicKeys = Object.keys(TAGS).filter(function(k){ return ROLE_TAG_KEYS.indexOf(k) < 0; });
+  var roleKeys = ROLE_TAG_KEYS;
+  var publicLib = {}, roleLib = {};
+  publicKeys.forEach(function(k){ publicLib[k] = TAGS[k]; });
+  roleKeys.forEach(function(k){ roleLib[k] = TAGS[k]; });
+  return [
+    "你是群聊角色生成器的标签匹配助手。请根据用户填写的群聊基础信息，按逻辑选择公共标签，并为每个角色单独分配分层标签。",
+    "必须输出JSON对象，格式严格为：{\"global\":{公共标签组:[]},\"roles\":[{\"index\":1,角色标签组:[]},...]}。不要解释。",
+    "global 的 key 必须覆盖公共标签库全部 key；roles 数量必须等于生成数量；每个 role 必须覆盖角色标签库全部 key；每个字符串必须原样来自对应标签库。",
+    "重要：除 roleCoreArchetype、roleInteractionStance、roleEmotionalTexture、roleSpeechConflictStyle 这4个互斥主轴每项只选1个外，其他标签区块不要只选1个。公共标签区块每项至少选2个；identityTypes/groupRoleFunction/surfacePersona/midBehavior/speakStyle/speakMechanism 等角色区块至少选3个；abilities/lifeDetails/memoryMechanism 至少选4个；nicknameStructure/nicknameUsageScene 至少选2个；外貌只需要选择 appearanceMale / appearanceFemale / appearanceNeutral 这三类视觉气质标签，中文外貌和英文Prompt细节不要做成标签，由生成提示词强制内嵌；blocks 至少选10个。",
+    "角色分配必须有逻辑：成员之间要功能互补、人格有差异、关系能形成化学反应，不能给所有角色分同一批标签，也不能随机乱选。",
+    "如果生成数量为8-12人，roleCoreArchetype、roleInteractionStance、roleEmotionalTexture、roleSpeechConflictStyle必须尽量不重复；昵称来源也要分散，但每个角色昵称最多两层，避免每个角色都是叠字+猫猫/小狗。",
+    "",
+    "【群聊基础信息】",
+    basicText(),
+    "生成数量：" + val("count"),
+    "",
+    "【公共标签库】",
+    JSON.stringify(publicLib),
+    "",
+    "【角色标签库】",
+    JSON.stringify(roleLib)
+  ].join("\n");
+}
+async function autoPickTags(){var btn=el("autoTagBtn");btn.disabled=true;btn.innerHTML="⏳ AI 匹配中...";try{if(!meaningfulInput()){randomPickAllTags(false);return}if(!val("apiBase").trim()||!val("apiKey").trim()){applyAutoTags(heuristicAutoTags());showToast("未配置API，已用本地规则匹配");return}var r=await callLLM(buildAutoTagPrompt());applyAutoTags(extractJsonObject(r))}catch(e){applyAutoTags(heuristicAutoTags());showToast("AI匹配失败，已用本地规则兜底")}finally{btn.disabled=false;btn.innerHTML="🤖 AI 根据①自动匹配分层标签"}}
+function randomPickAllTags(showMsg){var obj={global:{},roles:[]};Object.keys(TAGS).forEach(function(k){if(ROLE_TAG_KEYS.indexOf(k)<0)obj.global[k]=pickRandomFrom(k)});assignHeuristicRoles();var n=parseInt(val("count")||"4");for(var i=1;i<=n;i++){var r={index:i};ROLE_TAG_KEYS.forEach(function(k){r[k]=(roleSelected[i]&&roleSelected[i][k])||[]});obj.roles.push(r)}applyAutoTags(obj);if(showMsg)showToast("已生成一组有逻辑的分层标签")}
+function fallback(data){var roles=["冷静军师","嘴欠气氛组","执行推进者","情绪托底者","资料整理者","风险提醒者","创意策划","生活管家","关系观察员","温柔收尾者","行动派队友","安静记录员"];var text="【生成说明】\nAPI调用失败，以下是本地模板。配置可用API后会生成更完整、更有活人感的群聊角色。\n\n【群聊一句话定位】\n"+data.groupName+"是一组围绕「"+data.goal+"」长期陪伴user的群聊角色，成员会互相接话、互相补台，也会在关键时刻推动user行动。\n\n";for(var i=0;i<data.count;i++){text+="【角色"+(i+1)+"｜"+roles[i%roles.length]+"】\n姓名：待AI补全\n昵称：AI正式生成时只补两层：“公开昵称 / 私下昵称”，并说明来源和使用场景。\n核心钩子：不是工具人，而是群聊里有自己脾气和位置的"+roles[i%roles.length]+"。\n表层人格："+data.surfacePersona+"\n中层行为："+data.midBehavior+"\n深层核心："+data.coreDrive+"\n群聊定位："+roles[i%roles.length]+"。\n发言习惯：短句、先接话、再给建议，不机械轮流发言。\n与user关系：偏向user，但不替user做决定。\n边界：不乱承诺，不集体压迫user，不输出虚假完成。\n\n"}return text}
+async function generate(){var btn=el("genBtn");btn.disabled=true;btn.innerText="生成中...";el("out").className="output placeholder";el("out").innerText="正在生成有分层人设和关系感的群聊角色...";var data=getConfig();lastPrompt=buildPrompt(data);try{result=await callLLM(lastPrompt);display(result)}catch(e){result="API调用失败，已使用本地模板生成。\n错误信息："+e.message+"\n\n"+fallback(data);display(result)}try{localStorage.setItem("group_chat_role_last_v3_0",result)}catch(e){}btn.disabled=false;btn.innerText="✨ 生成群聊角色"}
+function copyText(){if(!result){showToast("还没有内容");return}copyString(result,"已复制")}function copyPromptOnly(){lastPrompt=buildPrompt(getConfig());copyString(lastPrompt,"提示词已复制")}function copyString(s,msg){var t=document.createElement("textarea");t.value=s;document.body.appendChild(t);t.select();document.execCommand("copy");document.body.removeChild(t);showToast(msg)}
+function saveText(){if(!result){showToast("还没有内容");return}var cfg=getConfig();saves.unshift({id:Date.now(),date:new Date().toLocaleString(),content:result,title:cfg.groupName,config:cfg});if(saves.length>30)saves=saves.slice(0,30);try{localStorage.setItem("group_chat_role_saves_v3_0",JSON.stringify(saves))}catch(e){}renderSaves();showToast("已存档")}
+function renderSaves(){var box=el("saves");if(!saves.length){box.innerHTML="暂无存档";return}box.innerHTML="";saves.forEach(function(s){var d=document.createElement("div");d.className="save";d.innerHTML="<b>🐾 "+htmlEscape(s.title)+"</b><div class='small'>"+htmlEscape(s.date)+"</div><div class='actions'><button class='btn-blue'>打开</button><button class='btn-white'>删除</button><button class='btn-gold'>导出MD</button><button class='btn-primary'>导出JSON</button></div>";var bs=d.querySelectorAll("button");bs[0].onclick=function(){display(s.content)};bs[1].onclick=function(){saves=saves.filter(function(x){return x.id!==s.id});localStorage.setItem("group_chat_role_saves_v3_0",JSON.stringify(saves));renderSaves()};bs[2].onclick=function(){downloadFile(safeFileName(s.title)+"_"+s.id+".md","# "+s.title+"\n\n"+s.content,"text/markdown;charset=utf-8")};bs[3].onclick=function(){downloadFile(safeFileName(s.title)+"_"+s.id+".json",JSON.stringify(s,null,2),"application/json;charset=utf-8")};box.appendChild(d)})}
+function init(){loadApi();loadModelCache();renderAll();renderRoleSlots();try{saves=JSON.parse(localStorage.getItem("group_chat_role_saves_v3_0")||"[]")}catch(e){saves=[]}renderSaves();try{var last=localStorage.getItem("group_chat_role_last_v3_0");if(last)display(last)}catch(e){}}
+init();
+</script>
+</body>
+</html>
